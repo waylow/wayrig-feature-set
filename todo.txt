@@ -1,0 +1,9 @@
+DECIDE LATER:
+change the display location of the heel?
+Disable Twist on neck?
+
+
+TO DO:
+
+Rename root bone
+Hardcoded root in limb_rigs (search for ''#HARDCODED root' and just 'root')
