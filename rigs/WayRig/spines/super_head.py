@@ -8,7 +8,7 @@ from rigify.utils.naming import make_derived_name
 from rigify.utils.bones import align_bone_orientation, align_bone_to_axis, set_bone_widget_transform, put_bone
 from rigify.utils.widgets_basic import create_circle_widget, create_sphere_widget
 from rigify.utils.widgets_special import create_neck_bend_widget, create_neck_tweak_widget
-from rigify.utils.switch_parent import SwitchParentBuilder
+from ....utils.switch_parent import SwitchParentBuilder
 from rigify.utils.misc import map_list
 
 from rigify.utils.widgets import adjust_widget_transform_mesh

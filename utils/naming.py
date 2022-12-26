@@ -9,7 +9,7 @@ import enum
 ORG_PREFIX = "ORG-"  # Prefix of original bones.
 MCH_PREFIX = "MCH-"  # Prefix of mechanism bones.
 DEF_PREFIX = "DEF-"  # Prefix of deformation bones.
-ROOT_NAME = "root"   # Name of the root bone.
+ROOT_NAME = "Root"   # Name of the root bone.
 
 _PREFIX_TABLE = { 'org': "ORG", 'mch': "MCH", 'def': "DEF", 'ctrl': '' }
 

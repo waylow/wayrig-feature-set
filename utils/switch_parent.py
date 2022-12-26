@@ -21,6 +21,7 @@ from collections import defaultdict
 from itertools import count, repeat, chain
 from mathutils import Matrix
 
+from .naming import ROOT_NAME
 
 class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
     """
@@ -37,7 +38,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
         self.child_map = {}
         self.frozen = False
 
-        self.register_parent(None, 'root', name='Root', is_global=True)
+        self.register_parent(None, ROOT_NAME, name='Root', is_global=True)
 
 
     ##############################
