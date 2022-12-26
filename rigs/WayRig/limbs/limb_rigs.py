@@ -25,6 +25,8 @@ from itertools import count, chain
 from mathutils import Vector
 from collections import namedtuple
 
+from ....utils.naming import ROOT_NAME
+
 
 SegmentEntry = namedtuple('SegmentEntry', ['org', 'org_idx', 'seg_idx', 'pos'])
 
@@ -197,7 +199,7 @@ class BaseLimbRig(BaseRig):
     @stage.rig_bones
     def rig_master_control(self):
         mch = self.bones.mch
-        self.make_constraint(mch.master, 'COPY_SCALE', 'root', use_make_uniform=True) #HARDCODED root
+        self.make_constraint(mch.master, 'COPY_SCALE', ROOT_NAME, use_make_uniform=True)
         if self.use_uniform_scale:
             self.make_constraint(mch.master, 'COPY_SCALE', self.bones.ctrl.master, use_offset=True, space='LOCAL')
 
@@ -219,7 +221,7 @@ class BaseLimbRig(BaseRig):
     @stage.parent_bones
     def parent_mch_follow_bone(self):
         mch = self.bones.mch.follow
-        align_bone_orientation(self.obj, mch, 'root') #HARDCODED root
+        align_bone_orientation(self.obj, mch, ROOT_NAME)
         self.set_bone_parent(mch, self.rig_parent_bone, inherit_scale='FIX_SHEAR')
 
     @stage.configure_bones
@@ -234,7 +236,7 @@ class BaseLimbRig(BaseRig):
     def rig_mch_follow_bone(self):
         mch = self.bones.mch.follow
 
-        self.make_constraint(mch, 'COPY_SCALE', 'root', use_make_uniform=True) #HARDCODED root
+        self.make_constraint(mch, 'COPY_SCALE', ROOT_NAME, use_make_uniform=True)
 
         if self.use_uniform_scale:
             self.make_constraint(
@@ -242,7 +244,7 @@ class BaseLimbRig(BaseRig):
                 use_make_uniform=True, use_offset=True, space='LOCAL'
             )
 
-        con = self.make_constraint(mch, 'COPY_ROTATION', 'root') #HARDCODED root
+        con = self.make_constraint(mch, 'COPY_ROTATION', ROOT_NAME)
 
         self.make_driver(con, 'influence', variables=[(self.prop_bone, 'FK_limb_follow')])
 
@@ -438,7 +440,7 @@ class BaseLimbRig(BaseRig):
         self.register_switch_parents(pbuilder)
 
         pbuilder.build_child(
-            self, ctrl.ik, prop_bone=master, select_parent='Root', #HARDCODED root
+            self, ctrl.ik, prop_bone=master, select_parent=ROOT_NAME,
             prop_id='IK_parent', prop_name='IK Parent', controls=pcontrols,
         )
 

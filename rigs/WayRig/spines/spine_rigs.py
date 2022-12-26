@@ -15,6 +15,7 @@ from rigify.base_rig import stage
 
 from ..chain_rigs import TweakChainRig, ConnectingChainRig
 
+from ....utils.naming import ROOT_NAME
 
 class BaseSpineRig(TweakChainRig):
     """
@@ -232,7 +233,7 @@ class BaseHeadTailRig(ConnectingChainRig):
 
     @stage.parent_bones
     def align_mch_follow_bones(self):
-        self.follow_bone = self.get_parent_master('root')
+        self.follow_bone = self.get_parent_master(ROOT_NAME)
 
         for org, name, bone, defval, copy_scale in self.rotation_bones:
             align_bone_orientation(self.obj, bone, self.follow_bone)
