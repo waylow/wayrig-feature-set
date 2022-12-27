@@ -186,21 +186,21 @@ def create_sample(obj):
 
     bones = {}
 
-    bone = arm.edit_bones.new('DEF-bone')
+    bone = arm.edit_bones.new('DEF-Bone')
     bone.head[:] = 0.0000, 0.0000, 0.0000
     bone.tail[:] = 0.0000, 0.0000, 0.2000
     bone.roll = 0.0000
     bone.use_connect = False
-    bones['DEF-bone'] = bone.name
+    bones['DEF-Bone'] = bone.name
 
     bpy.ops.object.mode_set(mode='OBJECT')
     pbone = obj.pose.bones[bones['DEF-bone']]
-    pbone.rigify_type = 'basic.raw_copy'
+    pbone.rigify_type = 'WayRig.basic.raw_copy'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
+    pbone.rotation_mode = 'XYZ'
 
     bpy.ops.object.mode_set(mode='EDIT')
     for bone in arm.edit_bones:

@@ -361,7 +361,7 @@ class Rig(BaseHeadTailRig):
         rig = self.rigify_parent or self
         builder = SwitchParentBuilder(self.generator)
         builder.register_parent(
-            self, self.bones.org[-1], name='Head',
+        self, self.bones.org[-1], name='Head',
             inject_into=rig, exclude_self=True, tags={'head'},
         )
 
