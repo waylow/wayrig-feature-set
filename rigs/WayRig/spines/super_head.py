@@ -447,7 +447,7 @@ class Rig(BaseHeadTailRig):
 
     @stage.rig_bones
     def rig_head_bend_bones(self):
-        if self.params.make_bendable_foot:
+        if self.params.make_bendable_head:
             orgs = self.bones.org
             #Head DEF
             head = self.bones.deform[-1]
