@@ -6,6 +6,16 @@ from rigify.utils.errors import MetarigError
 from . import generate
 
 
+def is_metarig(obj):
+    if not (obj and obj.data and obj.type == 'ARMATURE'):
+        return False
+    if 'rig_id' in obj.data:
+        return False
+    for b in obj.pose.bones:
+        if b.rigify_type != "":
+            return True
+    return False
+
 class Generate_WayRig(bpy.types.Operator):
     """Generates a rig from the active metarig armature"""
     bl_idname = "pose.wayrig_generate"
