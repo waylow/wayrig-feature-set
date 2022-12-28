@@ -2,7 +2,7 @@
 
 import bpy
 
-from rigify.utils.naming import strip_org, strip_prefix, choose_derived_bone, is_control_bone
+from rigify.utils.naming import strip_org, strip_prefix, choose_derived_bone, is_control_bone, make_derived_name
 from rigify.utils.mechanism import copy_custom_properties_with_ui, move_all_constraints
 from rigify.utils.widgets import layout_widget_dropdown, create_registered_widget
 
@@ -10,20 +10,6 @@ from rigify.base_rig import BaseRig
 from rigify.base_generate import SubstitutionRig
 
 from itertools import repeat
-
-'''
-Due to T80764, bone name handling for 'limbs.raw_copy' was hard-coded in generate.py
-
-class Rig(SubstitutionRig):
-    """ A raw copy rig, preserving the metarig bone as is, without the ORG prefix. """
-
-    def substitute(self):
-        # Strip the ORG prefix during the rig instantiation phase
-        new_name = strip_org(self.base_bone)
-        new_name = self.generator.rename_org_bone(self.base_bone, new_name)
-
-        return [ self.instantiate_rig(InstanceRig, new_name) ]
-'''
 
 class RelinkConstraintsMixin:
     """ Utilities for constraint relinking. """
@@ -57,10 +43,18 @@ class RelinkConstraintsMixin:
 
             parent_spec = self.params.parent_bone
             if parent_spec:
-                old_parent = self.get_bone_parent(bone_name)
-                new_parent = self.find_relink_target(parent_spec, old_parent or '') or None
-                self.set_bone_parent(bone_name, new_parent)
-                return new_parent
+                if parent_spec == 'None':
+                    self.set_bone_parent(bone_name, None)
+                    self.generator.disable_auto_parent(bone_name)
+                    # if control boolean is true, change the control bone too
+                    if self.make_control:
+                        self.set_bone_parent(make_derived_name(bone_name, 'ctrl'), None)
+                        self.generator.disable_auto_parent(make_derived_name(bone_name, 'ctrl'))
+                else:
+                    old_parent = self.get_bone_parent(bone_name)
+                    new_parent = self.find_relink_target(parent_spec, old_parent or '') or None
+                    self.set_bone_parent(bone_name, new_parent)
+                    return new_parent
 
 
     def relink_constraint(self, con, specs):

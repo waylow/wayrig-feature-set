@@ -256,12 +256,12 @@ class Generator(base_generate.BaseGenerator):
             if bone.name == ROOT_NAME:
                 if bone.parent:
                     raise MetarigError('Root bone must have no parent')
-                if get_rigify_type(bone) not in ('', 'basic.raw_copy'):
+                if get_rigify_type(bone) not in ('', 'basic.raw_copy', 'WayRig.basic.raw_copy'):
                     raise MetarigError('Root bone must have no rig, or use basic.raw_copy')
                 continue
 
             # This rig type is special in that it preserves the name of the bone.
-            if get_rigify_type(bone) != 'basic.raw_copy':
+            if get_rigify_type(bone) != 'WayRig.basic.raw_copy':
                 bone.name = make_original_name(original_bones[i])
                 original_bones[i] = bone.name
 
