@@ -517,6 +517,10 @@ class BaseLimbRig(BaseRig):
         else:
             roll = pi
 
+        # Hacky way to flip the widget if it's on the Right side of the armature
+        if self.obj.pose.bones[self.bones.org.main[0]].name.endswith(".R"):
+            roll += pi
+
         create_ikarrow_widget(self.obj, ctrl, roll=roll)
         set_bone_widget_transform(self.obj, self.bones.ctrl.ik_base, self.bones.mch.master, target_size=False)
 
