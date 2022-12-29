@@ -47,9 +47,12 @@ class RelinkConstraintsMixin:
                     self.set_bone_parent(bone_name, None)
                     self.generator.disable_auto_parent(bone_name)
                     # if control boolean is true, change the control bone too
-                    if self.make_control:
-                        self.set_bone_parent(make_derived_name(bone_name, 'ctrl'), None)
-                        self.generator.disable_auto_parent(make_derived_name(bone_name, 'ctrl'))
+                    try:
+                        if self.make_control:
+                            self.set_bone_parent(make_derived_name(bone_name, 'ctrl'), None)
+                            self.generator.disable_auto_parent(make_derived_name(bone_name, 'ctrl'))
+                    except:
+                        pass
                 else:
                     old_parent = self.get_bone_parent(bone_name)
                     new_parent = self.find_relink_target(parent_spec, old_parent or '') or None
