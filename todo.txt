@@ -1,9 +1,22 @@
-DECIDE LATER:
-change the display location of the heel?
-Disable Twist on neck?
+NEXT:
+- face rigs (skin)
 
+basic skin chain
+stretchy skin chain
+skin anchor 
+
+  Euler skin bones
+  fix the brow constraints?
+
+- check out tounge rig
+- encode my own tongue rig
 
 TO DO:
-
-Rename root bone
-Hardcoded root in limb_rigs (search for ''#HARDCODED root' and just 'root')
+- Create Root_GOD
+- add options for other widgets (in library)
+-easy euler bones
+- better way to relink armature constraint (can't get it on the ctrl only changes the subtargets)
+- look at cloud_tweak to figure out how to adjust the location of a generated bone (eg - torso position)
+- create own meta rigs to speed things up
+- fix bone colours
+-
