@@ -296,5 +296,5 @@ class PositionQueryNode(ControlQueryNode):
 
 
 def create_sample(obj):
-    from rigify.rigs.basic.super_copy import create_sample as inner
-    obj.pose.bones[inner(obj)["Bone"]].rigify_type = 'skin.glue'
+    from ..basic.super_copy import create_sample as inner
+    obj.pose.bones[inner(obj)["Bone"]].rigify_type = 'WayRig.skin.glue'
