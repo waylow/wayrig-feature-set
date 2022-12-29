@@ -423,15 +423,19 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
                 self.get_bone(self.control_bone).lock_scale = (True, True, True)
 
         layers = self.rig.get_control_node_layers(self)
+        print('THIS IS RUNNING?')
+        self.get_bone(self.control_bone).rotation_mode = 'XYZ'
         if layers:
             bone = self.get_bone(self.control_bone).bone
             set_bone_layers(bone, layers, not self.is_master_node)
+
 
     def rig_bones(self):
         if self.is_master_node:
             # Invoke parent rig callbacks
             for rig in reversed(self.rig.get_all_parent_skin_rigs()):
                 rig.extend_control_node_rig(self)
+
 
             # Rig reparent bones
             reparent_source = self.control_bone
