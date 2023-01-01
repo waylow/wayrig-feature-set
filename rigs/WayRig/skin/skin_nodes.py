@@ -423,7 +423,6 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
                 self.get_bone(self.control_bone).lock_scale = (True, True, True)
 
         layers = self.rig.get_control_node_layers(self)
-        print('THIS IS RUNNING?')
         self.get_bone(self.control_bone).rotation_mode = 'XYZ'
         if layers:
             bone = self.get_bone(self.control_bone).bone
