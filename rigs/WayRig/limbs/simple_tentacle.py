@@ -4,11 +4,12 @@ import bpy
 
 from itertools import count
 
-from ...utils.bones import align_chain_x_axis
-from ...utils.widgets_basic import create_circle_widget
-from ...utils.layers import ControlLayersOption
+from rigify.utils.bones import align_chain_x_axis
+from rigify.utils.widgets_basic import create_circle_widget
+from rigify.utils.layers import ControlLayersOption
+from rigify.utils.naming import strip_org
 
-from ...base_rig import stage
+from rigify.base_rig import stage
 
 from ..chain_rigs import TweakChainRig
 
@@ -41,7 +42,15 @@ class Rig(TweakChainRig):
         super().configure_tweak_bone(i, tweak)
 
         # Backward compatibility
-        self.get_bone(tweak).rotation_mode = 'QUATERNION'
+        self.get_bone(tweak).rotation_mode = 'XYZ'
+
+    @stage.configure_bones
+    def configure_fk_controls(self):
+
+        orgs = self.bones.org
+
+        for fk in orgs:
+            self.get_bone(strip_org(fk)).rotation_mode = 'XYZ'
 
     # Rig
     @stage.rig_bones
@@ -103,51 +112,51 @@ def create_sample(obj):
 
     bones = {}
 
-    bone = arm.edit_bones.new('Bone')
+    bone = arm.edit_bones.new('Bone_01')
     bone.head[:] = 0.0000, 0.0000, 0.0000
     bone.tail[:] = 0.0000, 0.0000, 0.3333
     bone.roll = 0.0000
     bone.use_connect = False
-    bones['Bone'] = bone.name
+    bones['Bone_01'] = bone.name
 
-    bone = arm.edit_bones.new('Bone.002')
+    bone = arm.edit_bones.new('Bone_02')
     bone.head[:] = 0.0000, 0.0000, 0.3333
     bone.tail[:] = 0.0000, 0.0000, 0.6667
     bone.roll = 0.0000
     bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['Bone']]
-    bones['Bone.002'] = bone.name
+    bone.parent = arm.edit_bones[bones['Bone_01']]
+    bones['Bone_02'] = bone.name
 
-    bone = arm.edit_bones.new('Bone.001')
+    bone = arm.edit_bones.new('Bone_03')
     bone.head[:] = 0.0000, 0.0000, 0.6667
     bone.tail[:] = 0.0000, 0.0000, 1.0000
     bone.roll = 0.0000
     bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['Bone.002']]
-    bones['Bone.001'] = bone.name
+    bone.parent = arm.edit_bones[bones['Bone_02']]
+    bones['Bone_03'] = bone.name
 
     bpy.ops.object.mode_set(mode='OBJECT')
-    pbone = obj.pose.bones[bones['Bone']]
-    pbone.rigify_type = 'limbs.simple_tentacle'
+    pbone = obj.pose.bones[bones['Bone_01']]
+    pbone.rigify_type = 'WayRig.limbs.simple_tentacle'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['Bone.002']]
+    pbone.rotation_mode = 'XYZ'
+    pbone = obj.pose.bones[bones['Bone_02']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['Bone.001']]
+    pbone.rotation_mode = 'XYZ'
+    pbone = obj.pose.bones[bones['Bone_03']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
+    pbone.rotation_mode = 'XYZ'
 
     bpy.ops.object.mode_set(mode='EDIT')
     for bone in arm.edit_bones:
