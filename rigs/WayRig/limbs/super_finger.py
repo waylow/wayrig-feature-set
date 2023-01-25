@@ -48,8 +48,16 @@ class Rig(SimpleChainRig):
 
         if self.params.align_control_to_tip:
             align_bone_y_axis(self.obj, name, (last_bone.tail - first_bone.head))
+            # average the bone roll
+            bone_rolls = []
+            for b in orgs:
+                bone_rolls.append(self.get_bone(b).roll)
+
+            self.get_bone(name).roll = sum(bone_rolls) / len(bone_rolls)
+
 
         self.get_bone(name).length = (last_bone.tail - first_bone.head).length * 1.15
+
 
     @stage.configure_bones
     def configure_master_control(self):
