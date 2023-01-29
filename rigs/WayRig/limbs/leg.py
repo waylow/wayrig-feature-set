@@ -167,12 +167,7 @@ class Rig(BaseLimbRig):
 
     def make_ik_spin_bone(self, orgs):
         name = self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_spin_IK'))
-        if self.params.move_foot_spin:
-            tail = self.get_bone(orgs[3]).tail
-            tail.z = 0
-            put_bone(self.obj, name, tail, matrix=self.ik_matrix, scale=0.5)
-        else:
-            put_bone(self.obj, name, self.get_bone(orgs[3]).head, matrix=self.ik_matrix, scale=0.5)
+        put_bone(self.obj, name, self.get_bone(orgs[3]).head, matrix=self.ik_matrix, scale=0.5)
         return name
 
     @stage.parent_bones
@@ -187,6 +182,15 @@ class Rig(BaseLimbRig):
         spin.rotation_mode = 'XYZ'
         spin.lock_scale = True, True, True
         spin.lock_location = True, True, True
+
+    @stage.apply_bones
+    def apply_ik_spin_bone(self):
+        if self.params.move_foot_spin:
+            orgs = self.bones.org.main
+            name = make_derived_name(orgs[2], 'ctrl', '_spin_IK')
+            tail = self.get_bone(orgs[3]).tail
+            tail.z = 0
+            put_bone(self.obj, name, tail, matrix=self.ik_matrix, scale=0.5)
 
 
     @stage.generate_widgets
