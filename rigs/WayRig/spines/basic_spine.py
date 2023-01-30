@@ -22,8 +22,10 @@ class Rig(BaseSpineRig):
     Spine rig with fixed pivot, hip/chest controls and tweaks.
     """
 
+    
     def initialize(self):
         super().initialize()
+        self.bbone_segments = self.params.bbones
 
         # Check if user provided the pivot position
         self.pivot_pos = self.params.pivot_pos
@@ -276,6 +278,14 @@ class Rig(BaseSpineRig):
             description="Create slider for volume preservation"
         )
 
+        params.bbones = bpy.props.IntProperty(
+            name        = 'B-Bone Segments',
+            default     = 8,
+            min         = 1,
+            max         = 32,
+            description = 'Number of B-Bone segments'
+        )
+
 
         super().add_parameters(params)
 
@@ -293,6 +303,8 @@ class Rig(BaseSpineRig):
         r.prop(params, "pivot_pos")
         r = layout.row()
         r.prop(params, "make_preserve_volume")
+        r = layout.row()
+        r.prop(params, "bbones")
 
         super().parameters_ui(layout, params)
 
