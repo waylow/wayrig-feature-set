@@ -392,7 +392,10 @@ class BaseLimbRig(BaseRig):
         return self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_IK'))
 
     def make_ik_pole_bone(self, orgs):
-        name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_IK_target'))
+        if self.params.ik_pole_name == '':
+            name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_IK_target'))
+        else:
+            name = self.copy_bone(orgs[0], self.params.ik_pole_name)
 
         pole = self.get_bone(name)
         pole.head = self.get_bone(orgs[0]).tail + self.elbow_vector
@@ -1018,6 +1021,11 @@ class BaseLimbRig(BaseRig):
             default=True,
             description="Add tweaks to the foot, useful for cartoony characters"
         )
+        params.ik_pole_name = bpy.props.StringProperty(
+            name='IK Pole Target Name',
+            default='',
+            description="Specify the name of the pole target. (Leave blank to auto generate name)"
+        )
 
         # Setting up extra layers for the FK and tweak
         ControlLayersOption.FK.add_parameters(params)
@@ -1043,6 +1051,7 @@ class BaseLimbRig(BaseRig):
         layout.prop(params, 'limb_uniform_scale')
         layout.prop(params, 'make_custom_pivot', text="Custom IK Pivot")
         layout.prop(params, 'ik_local_location')
+        layout.prop(params, 'ik_pole_name', text="Custom IK Pole Name")
 
         ControlLayersOption.FK.parameters_ui(layout, params)
         ControlLayersOption.TWEAK.parameters_ui(layout, params)
