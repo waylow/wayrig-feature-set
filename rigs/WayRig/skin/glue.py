@@ -7,7 +7,7 @@ from rigify.utils.widgets_basic import create_cube_widget
 from rigify.utils.mechanism import move_all_constraints
 
 from rigify.base_rig import stage
-from rigify.base_generate import SubstitutionRig
+from ....base_generate import SubstitutionRig
 
 from .skin_nodes import ControlQueryNode
 from .skin_rigs import BaseSkinRig
@@ -296,5 +296,5 @@ class PositionQueryNode(ControlQueryNode):
 
 
 def create_sample(obj):
-    from ..basic.super_copy import create_sample as inner
-    obj.pose.bones[inner(obj)["Bone"]].rigify_type = 'WayRig.skin.glue'
+    from rigify.rigs.basic.super_copy import create_sample as inner
+    obj.pose.bones[inner(obj)["Bone"]].rigify_type = 'skin.glue'
