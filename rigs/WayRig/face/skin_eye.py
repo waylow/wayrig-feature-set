@@ -11,7 +11,7 @@ from mathutils import Vector, Matrix
 
 from rigify.rig_ui_template import PanelLayout
 from rigify.utils.naming import make_derived_name, mirror_name, change_name_side, Side, SideZ
-from rigify.utils.bones import align_bone_z_axis, put_bone, TypedBoneDict
+from rigify.utils.bones import align_bone_z_axis, put_bone#, TypedBoneDict
 from rigify.utils.widgets import (widget_generator, generate_circle_geometry,
                               generate_circle_hull_geometry)
 from rigify.utils.widgets_basic import create_circle_widget
