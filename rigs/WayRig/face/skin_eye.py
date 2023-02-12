@@ -13,7 +13,7 @@ from rigify.utils.bones import align_bone_z_axis, put_bone
 from rigify.utils.widgets import (widget_generator, generate_circle_geometry,
                               generate_circle_hull_geometry)
 from rigify.utils.widgets_basic import create_circle_widget
-from rigify.utils.switch_parent import SwitchParentBuilder
+from ....utils.switch_parent import SwitchParentBuilder
 from rigify.utils.misc import map_list, matrix_from_axis_pair, LazyRef
 
 from rigify.base_rig import stage, RigComponent
