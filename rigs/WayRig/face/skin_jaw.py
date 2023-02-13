@@ -297,7 +297,7 @@ class Rig(BaseSkinRig):
     @stage.generate_bones
     def make_mouth_control(self):
         org = self.bones.org
-        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_mouth'))
+        name = self.copy_bone(org, 'Mouth_master') # edited just to call it 'Mouth_master'
         self.position_mouth_bone(name, 1)
         self.bones.ctrl.mouth = name
 
