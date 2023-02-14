@@ -563,7 +563,7 @@ class EyeClusterControl(RigComponent):
         self.build_parent_switch()
 
     def make_master_control(self):
-        name = self.new_bone(make_derived_name(self.get_common_rig_name(), 'ctrl', '_common'))
+        name = self.new_bone(make_derived_name(self.get_common_rig_name(), 'ctrl', 's_master')) # make it plural Hack
         bone = self.get_bone(name)
         bone.matrix = self.matrix
         bone.length = self.size
