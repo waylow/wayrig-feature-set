@@ -14,6 +14,8 @@ from rigify.utils.bones import align_bone_orientation, align_bone_to_axis, align
 from rigify.utils.misc import map_list, LazyRef
 from rigify.utils.mechanism import driver_var_transform
 
+from ..widgets import create_tongue_master_widget
+
 from rigify.base_rig import stage
 
 from ..skin.skin_nodes import ControlBoneNode, ControlNodeLayer, ControlNodeIcon
@@ -30,8 +32,7 @@ class Control(enum.IntEnum):
 
 class Rig(BasicChainRig):
     """
-    Skin chain that propagates motion of its end and middle controls, resulting in
-    stretching the whole chain rather than just immediately connected chain segments.
+    Edited version of the Skin chain that adds an optional master control.
     """
 
     min_chain_length = 2
@@ -325,6 +326,14 @@ class Rig(BasicChainRig):
                     self.set_bone_parent(make_derived_name(org, 'mch', '_poffset'), 'Tongue_master', use_connect=False, inherit_scale='FULL')
 
             self.obj.pose.bones['Tongue_master'].rotation_mode = 'XYZ'
+
+
+    @stage.generate_widgets
+    def make_control_widget(self):
+        if self.params.add_tongue_master:
+            create_tongue_master_widget(self.obj, 'Tongue_master')
+
+
 
 
     ####################################################

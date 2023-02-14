@@ -5,6 +5,23 @@ from rigify.utils.widgets import create_widget, widget_generator
 
 MODULE_NAME = "super_widgets"  # Windows/Mac blender is weird, so __package__ doesn't work
 
+
+def create_tongue_master_widget(rig, bone_name, size=1.0, bone_transform_name=None):
+    obj = create_widget(rig, bone_name, bone_transform_name)
+    if obj is not None:
+        verts = [(-0.3*size, 1.31134e-08*size, 0.3*size), (-0.3*size, 0.075*size, 0.3*size),
+                      (-0.3*size, -1.31134e-08*size, -0.3*size), (-0.3*size, 0.075*size, -0.3*size),
+                      (0.3*size, 1.31134e-08*size, 0.3*size), (0.3*size, 0.075*size, 0.3*size),
+                      (0.3*size, -1.31134e-08*size, -0.3*size), (0.3*size, 0.075*size, -0.3*size),
+                      ]
+        edges = [(2, 3), (0, 1), (0, 2), (1, 3), (0, 4), (4, 5), (2, 6), (3, 7), (1, 5), (5, 7),
+                      (6, 7), (4, 6), ]
+        faces = []
+
+        mesh = obj.data
+        mesh.from_pydata(verts, edges, faces)
+        mesh.update()
+
 def create_torso_widget(rig, bone_name, size=1.0, bone_transform_name=None):
     obj = create_widget(rig, bone_name, bone_transform_name)
     if obj is not None:
