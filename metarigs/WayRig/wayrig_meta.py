@@ -881,6 +881,13 @@ def create(obj):
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['Jaw']]
     bones['Chin_glue_end'] = bone.name
+    bone = arm.edit_bones.new('Chin_03.M')
+    bone.head = 0.0000, -0.1603, 1.7763
+    bone.tail = -0.0000, -0.1544, 1.7763
+    bone.roll = 0.0000
+    bone.use_connect = False
+    bone.parent = arm.edit_bones[bones['Jaw']]
+    bones['Chin_03.M'] = bone.name
     bone = arm.edit_bones.new('Nose_03.M')
     bone.head = 0.0000, -0.2023, 1.8316
     bone.tail = 0.0000, -0.1910, 1.8268
@@ -2419,6 +2426,10 @@ def create(obj):
         pbone.rigify_parameters.skin_control_orientation_bone = "Root"
     except AttributeError:
         pass
+    try:
+        pbone.rigify_parameters.skin_chain_falloff_twist = False
+    except AttributeError:
+        pass
     pbone = obj.pose.bones[bones['Brow_01.L']]
     pbone.rigify_type = 'WayRig.skin.basic_chain'
     pbone.lock_location = (False, False, False)
@@ -3035,6 +3046,14 @@ def create(obj):
         pbone.rigify_parameters.skin_glue_add_constraint_influence = 0.5
     except AttributeError:
         pass
+    pbone = obj.pose.bones[bones['Chin_03.M']]
+    pbone.rigify_type = 'WayRig.skin.anchor'
+    pbone.lock_location = (False, False, False)
+    pbone.lock_rotation = (False, False, False)
+    pbone.lock_rotation_w = False
+    pbone.lock_scale = (False, False, False)
+    pbone.rotation_mode = 'XYZ'
+    pbone.bone.layers = [False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
     pbone = obj.pose.bones[bones['Nose_03.M']]
     pbone.rigify_type = 'WayRig.skin.stretchy_chain'
     pbone.lock_location = (False, False, False)
