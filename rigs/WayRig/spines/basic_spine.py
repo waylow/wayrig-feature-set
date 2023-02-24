@@ -28,11 +28,15 @@ class Rig(BaseSpineRig):
         self.bbone_segments = self.params.bbones
 
         # Check if user provided the pivot position
-        self.pivot_pos = self.params.pivot_pos
+        self.pivot_position = self.params.pivot_position
+        self.torso_position = self.params.torso_position
         self.use_fk = self.params.make_fk_controls
 
-        if not (0 < self.pivot_pos < len(self.bones.org)):
+        if not (0 < self.pivot_position < len(self.bones.org)):
             self.raise_error("Please specify a valid pivot bone position.")
+
+        if not (0 <= self.torso_position < len(self.bones.org)):
+            self.raise_error("Please specify a valid torso bone position.")
 
     ####################################################
     # BONES
@@ -64,8 +68,10 @@ class Rig(BaseSpineRig):
     # Master control bone
 
     def get_master_control_pos(self, orgs):
-        base_bone = self.get_bone(orgs[0])
-        return (base_bone.head + base_bone.tail) / 2
+        torso_bone = self.get_bone(orgs[self.params.torso_position])
+        head_tail = self.params.torso_head_tail
+        bone_location = (torso_bone.head + ((torso_bone.tail - torso_bone.head) * head_tail) )
+        return bone_location
 
     ####################################################
     # Main control bones
@@ -73,7 +79,7 @@ class Rig(BaseSpineRig):
     @stage.generate_bones
     def make_end_control_bones(self):
         orgs = self.bones.org
-        pivot = self.pivot_pos
+        pivot = self.pivot_position
 
         hips =  make_derived_name(orgs[0], 'ctrl')
         chest = make_derived_name(orgs[-1], 'ctrl')
@@ -133,8 +139,8 @@ class Rig(BaseSpineRig):
         if self.use_fk:
             orgs = self.bones.org
             self.bones.ctrl.fk = self.fk_result = BoneDict(
-                hips = map_list(self.make_control_bone, count(0), orgs[0:self.pivot_pos], repeat(True)),
-                chest = map_list(self.make_control_bone, count(self.pivot_pos), orgs[self.pivot_pos:], repeat(False)),
+                hips = map_list(self.make_control_bone, count(0), orgs[0:self.pivot_position], repeat(True)),
+                chest = map_list(self.make_control_bone, count(self.pivot_position), orgs[self.pivot_position:], repeat(False)),
             )
 
     def make_control_bone(self, i, org, is_hip):
@@ -184,7 +190,7 @@ class Rig(BaseSpineRig):
         orgs = self.bones.org
         mch = self.bones.mch
 
-        mch.pivot = self.make_mch_pivot_bone(orgs[self.pivot_pos], 'pivot')
+        mch.pivot = self.make_mch_pivot_bone(orgs[self.pivot_position], 'pivot')
         mch.wgt_hips = self.make_mch_widget_bone(orgs[0], 'WGT-Hips')
         mch.wgt_chest = self.make_mch_widget_bone(orgs[-1], 'WGT-Chest')
 
@@ -217,8 +223,8 @@ class Rig(BaseSpineRig):
     def make_mch_chain(self):
         orgs = self.bones.org
         self.bones.mch.chain = BoneDict(
-            hips = map_list(self.make_mch_bone, orgs[0:self.pivot_pos], repeat(True)),
-            chest = map_list(self.make_mch_bone, orgs[self.pivot_pos:], repeat(False)),
+            hips = map_list(self.make_mch_bone, orgs[0:self.pivot_position], repeat(True)),
+            chest = map_list(self.make_mch_bone, orgs[self.pivot_position:], repeat(False)),
         )
         if not self.use_fk:
             self.fk_result = self.bones.mch.chain
@@ -266,12 +272,28 @@ class Rig(BaseSpineRig):
 
     @classmethod
     def add_parameters(self, params):
-        params.pivot_pos = bpy.props.IntProperty(
-            name='pivot_position',
+        params.pivot_position = bpy.props.IntProperty(
+            name='Pivot Position',
             default=2,
             min=0,
-            description='Position of the torso control and pivot point'
+            description='Position of the pivot (if enabled)'
         )
+
+        params.torso_position = bpy.props.IntProperty(
+            name='Torso Position',
+            default=2,
+            min=0,
+            description='Position of the torso (what bone will be the starting point)'
+        )
+
+        params.torso_head_tail = bpy.props.FloatProperty(
+            name='Torso head/tail',
+            default=0.5,
+            min=0.0,
+            max=1.0,
+            description='Slide the generated torso between the head/tail'
+        )
+
 
         params.make_preserve_volume = bpy.props.BoolProperty(
             name="Preserve Volume", default=True,
@@ -300,7 +322,10 @@ class Rig(BaseSpineRig):
     @classmethod
     def parameters_ui(self, layout, params):
         r = layout.row()
-        r.prop(params, "pivot_pos")
+        r.prop(params, "pivot_position")
+        r = layout.row()
+        r.prop(params, "torso_position")
+        r.prop(params, "torso_head_tail")
         r = layout.row()
         r.prop(params, "make_preserve_volume")
         r = layout.row()
