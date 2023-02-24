@@ -22,7 +22,7 @@ class Rig(BaseSpineRig):
     Spine rig with fixed pivot, hip/chest controls and tweaks.
     """
 
-    
+
     def initialize(self):
         super().initialize()
         self.bbone_segments = self.params.bbones

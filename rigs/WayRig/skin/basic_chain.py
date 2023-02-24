@@ -322,7 +322,10 @@ class Rig(BaseSkinChainRigWithRotationOption):
         if i == 0:
             self.make_constraint(org, 'COPY_LOCATION', node.control_bone)
 
-        self.make_constraint(org, 'STRETCH_TO', next_node.control_bone, keep_axis='SWING_Y')
+        con = self.make_constraint(org, 'STRETCH_TO', next_node.control_bone, keep_axis='SWING_Y')
+        if self.params.skin_chain_disable_volume:
+            con.volume = 'NO_VOLUME'
+
 
     ##############################
     # Deform chain
@@ -457,6 +460,12 @@ class Rig(BaseSkinChainRigWithRotationOption):
             description='Create a smooth B-Bone transition if an end of the chain meets another chain going in the same direction'
         )
 
+        params.skin_chain_disable_volume = bpy.props.BoolProperty(
+            name='Disable Volume Preservation',
+            default=False,
+            description='Disable the stretch-to volume preservation'
+        )
+
         super().add_parameters(params)
 
     @classmethod
@@ -494,7 +503,11 @@ class Rig(BaseSkinChainRigWithRotationOption):
         row.prop(params, "skin_chain_connect_sharp_angle", index=0, text="Start")
         row.prop(params, "skin_chain_connect_sharp_angle", index=1, text="End")
 
+
         super().parameters_ui(layout, params)
+
+        row = layout.row(align=True)
+        row.prop(params, "skin_chain_disable_volume")
 
 
 def create_sample(obj):

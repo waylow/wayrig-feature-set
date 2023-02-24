@@ -337,6 +337,12 @@ class Rig(BasicChainRig):
         ControlLayersOption.SKIN_PRIMARY.add_parameters(params)
         ControlLayersOption.SKIN_SECONDARY.add_parameters(params)
 
+        params.skin_chain_disable_volume = bpy.props.BoolProperty(
+            name='Disable Volume Preservation',
+            default=False,
+            description='Disable the stretch-to volume preservation'
+        )
+
         super().add_parameters(params)
 
     @classmethod
@@ -369,6 +375,8 @@ class Rig(BasicChainRig):
             ControlLayersOption.SKIN_SECONDARY.parameters_ui(layout, params)
 
         super().parameters_ui(layout, params)
+        row = layout.row(align=True)
+
 
 
 class ControlBoneChainPropagate(ControlBoneWeakParentLayer):
