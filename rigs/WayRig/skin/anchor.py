@@ -54,6 +54,12 @@ class Rig(BaseSkinChainRigWithRotationOption, RelinkConstraintsMixin):
 
             move_all_constraints(self.obj, org, node.control_bone)
 
+    @stage.apply_bones
+    def reparent_skin_anchor(self):
+        new_parent = self.relink_bone_parent(self.bones.org)
+        if new_parent:
+            self.set_bone_parent(self.control_node.control_bone, new_parent)
+
     ##############################
     # ORG chain
 
@@ -113,11 +119,13 @@ class Rig(BaseSkinChainRigWithRotationOption, RelinkConstraintsMixin):
         layout_widget_dropdown(row, params, "pivot_master_widget_type")
 
         layout.prop(params, "relink_constraints")
-
         layout.label(text="All constraints are moved to the control bone.", icon='INFO')
 
-        super().parameters_ui(layout, params)
+        layout.prop(params, "skin_control_orientation_bone", text="Orientation")
+        layout.prop(params, "parent_bone")
 
+        #super().parameters_ui(layout, params)
+        #self.add_relink_constraints_ui(layout, params)
 
 def create_sample(obj):
     from ..basic.super_copy import create_sample as inner
