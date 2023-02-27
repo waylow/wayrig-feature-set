@@ -195,7 +195,7 @@ class Rig(BaseHeadTailRig):
 
         if self.params.world_align_head:
             org = self.bones.org[-1]
-            set_bone_widget_transform(self.obj, ctrl, org, use_size=True, scale=2.0, target_size=False)
+            set_bone_widget_transform(self.obj, ctrl, org, use_size=True, scale=1.0, target_size=False)
 
     ####################################################
     # MCH bones associated with main controls
