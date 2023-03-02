@@ -402,12 +402,6 @@ class Rig(BaseSkinRig):
             description="Default setting for the Eyelids Follow sliders (X and Z)",
         )
 
-        params.target_distance_factor = bpy.props.FloatProperty(
-            name="Target Distance Factor",
-            default=15.0, min=1.0, max=50,
-            description="Increase/Decrease the distance the eye target is generated",
-        )
-
 
     @classmethod
     def parameters_ui(self, layout, params):
@@ -421,8 +415,6 @@ class Rig(BaseSkinRig):
         row.prop(params, "eyelid_follow_default", index=0, text="Follow X", slider=True)
         row.prop(params, "eyelid_follow_default", index=1, text="Follow Z", slider=True)
 
-        row = col.row(align=False)
-        row.prop(params, "target_distance_factor", text="Target Distance Factor", slider=False)
 
 '''
 class EyelidChainPatch(RigComponent):
@@ -507,9 +499,9 @@ class EyeClusterControl(RigComponent):
         length /= self.rig_count
 
         # Create the matrix from the average Y and world Z
-        matrix = matrix_from_axis_pair((0, 0, 1), axis, 'z').to_4x4()
-        #matrix.translation = center + axis * length * 5
-        matrix.translation = center + axis * length * (bone['rigify_parameters']['target_distance_factor'])
+        # matrix = matrix_from_axis_pair((0, 0, 1), axis, 'z').to_4x4()
+        matrix = matrix_from_axis_pair((0, 1, 0), (1,0,0), 'x').to_4x4()
+        matrix.translation = center + axis * length * 5
 
         self.size = length * 3 / 4
         self.matrix = matrix
@@ -630,15 +622,17 @@ class EyeClusterControl(RigComponent):
 
 @widget_generator
 def create_eye_widget(geom, *, size=1):
-    generate_circle_geometry(geom, Vector((0, 0, 0)), size/2)
+    mat_rot = mathutils.Matrix.Rotation(math.radians(90), 4, 'X')
+    generate_circle_geometry(geom, Vector((0, 0, 0)), size/2 , matrix=mat_rot)
 
 
 @widget_generator
 def create_eye_cluster_widget(geom, *, size=1, points):
+    mat_rot = mathutils.Matrix.Rotation(math.radians(90), 4, 'X')
     hpoints = [points[i] for i in mathutils.geometry.convex_hull_2d(points)]
 
-    generate_circle_hull_geometry(geom, hpoints, size*0.75, size*0.6)
-    generate_circle_hull_geometry(geom, hpoints, size, size*0.85)
+    # generate_circle_hull_geometry(geom, hpoints, size*0.75, size*0.6,  matrix=mat_rot)
+    generate_circle_hull_geometry(geom, hpoints, size, size*0.85, matrix=mat_rot)
 
 
 def create_sample(obj):
