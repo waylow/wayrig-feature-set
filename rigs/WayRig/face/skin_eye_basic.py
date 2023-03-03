@@ -146,7 +146,7 @@ class Rig(BaseSkinRig):
 
     ####################################################
     # CHILD CHAINS
-
+    '''
     def init_child_chains(self):
         self.child_chains = [rig for rig in self.rigify_children if isinstance(rig, BasicChainRig)]
 
@@ -160,18 +160,6 @@ class Rig(BaseSkinRig):
     ####################################################
     # CONTROL NODES
 
-    def extend_control_node_parent(self, parent, node):
-        if self.is_eye_control_node(node):
-            if self.is_eye_corner_node(node):
-                # Remember corners for later computations
-                assert not self.eye_corner_matrix
-                self.eye_corner_nodes.append(node)
-            else:
-                # Non-corners get extra motion applied to them
-                return self.extend_mid_node_parent(parent, node)
-
-        return parent
-
     def extend_mid_node_parent(self, parent, node):
         parent = ControlBoneParentOffset(self, node, parent)
 
@@ -181,35 +169,8 @@ class Rig(BaseSkinRig):
             influence=LazyRef(self.get_lid_follow_influence, node)
         )
 
-        # If Limit Distance on the control can be disabled, add another one to the mch
-        if self.params.eyelid_detach_option:
-            parent.add_limit_distance(
-                self.bones.org,
-                distance=(node.point - self.center).length,
-                limit_mode='LIMITDIST_ONSURFACE', use_transform_limit=True,
-                # Use custom space to accommodate scaling
-                space='CUSTOM', space_object=self.obj, space_subtarget=self.bones.org,
-                # Don't allow reordering this limit and subsequent offsets
-                ensure_order=True,
-            )
-
         return parent
-
-    def extend_control_node_rig(self, node):
-        if self.is_eye_control_node(node):
-            # Add Limit Distance to enforce following the surface of the eye to the control
-            con = self.make_constraint(
-                node.control_bone, 'LIMIT_DISTANCE', self.bones.org,
-                distance=(node.point - self.center).length,
-                limit_mode='LIMITDIST_ONSURFACE', use_transform_limit=True,
-                # Use custom space to accommodate scaling
-                space='CUSTOM', space_object=self.obj, space_subtarget=self.bones.org,
-            )
-
-            if self.params.eyelid_detach_option:
-                self.make_driver(con, 'influence',
-                                 variables=[(self.bones.ctrl.target, 'lid_attach')])
-
+    '''
     ####################################################
     # SCRIPT
 
@@ -226,18 +187,11 @@ class Rig(BaseSkinRig):
     def add_custom_properties(self):
         target = self.bones.ctrl.target
 
-        if self.params.eyelid_follow_split:
+        if self.params.eyelid_follow:
             self.make_property(
-                target, 'lid_follow', list(self.params.eyelid_follow_default),
-                description='Eylids follow eye movement (X and Z)'
+                target, 'lid_follow', (self.params.eyelid_follow_default),
+                description='Eylids follow eye movement'
             )
-        else:
-            self.make_property(target, 'lid_follow', 1.0,
-                               description='Eylids follow eye movement')
-
-        if self.params.eyelid_detach_option:
-            self.make_property(target, 'lid_attach', 1.0,
-                               description='Eylids follow eye surface')
 
     def add_ui_sliders(self, panel, *, add_name=False):
         target = self.bones.ctrl.target
@@ -245,16 +199,10 @@ class Rig(BaseSkinRig):
         name_tail = f' ({target})' if add_name else ''
         follow_text = f'Eyelids Follow{name_tail}'
 
-        if self.params.eyelid_follow_split:
-            row = panel.split(factor=0.66, align=True)
-            row.custom_prop(target, 'lid_follow', index=0, text=follow_text, slider=True)
-            row.custom_prop(target, 'lid_follow', index=1, text='', slider=True)
-        else:
+        if self.params.eyelid_follow:
             panel.custom_prop(target, 'lid_follow', text=follow_text, slider=True)
 
-        if self.params.eyelid_detach_option:
-            panel.custom_prop(
-                target, 'lid_attach', text=f'Eyelids Attached{name_tail}', slider=True)
+
 
     ####################################################
     # Master control
@@ -305,31 +253,18 @@ class Rig(BaseSkinRig):
         # Translate to track the tail of mch.master in mch.track. Its local
         # location is then copied to the control nodes.
         # Two constraints are used to provide different X and Z influence values.
-        con_x = self.make_constraint(
-            mch.track, 'COPY_LOCATION', mch.master, head_tail=1, name='lid_follow_x',
-            use_xyz=(True, False, False),
-            space='CUSTOM', space_object=self.obj, space_subtarget=self.bones.org,
-        )
-
         con_z = self.make_constraint(
-            mch.track, 'COPY_LOCATION', mch.master, head_tail=1, name='lid_follow_z',
+            mch.track, 'COPY_LOCATION', mch.master, head_tail=1, name='lid_follow',
             use_xyz=(False, False, True),
             space='CUSTOM', space_object=self.obj, space_subtarget=self.bones.org,
         )
 
         # Apply follow slider influence(s)
-        if self.params.eyelid_follow_split:
-            self.make_driver(con_x, 'influence', variables=[(ctrl.target, 'lid_follow', 0)])
-            self.make_driver(con_z, 'influence', variables=[(ctrl.target, 'lid_follow', 1)])
-        else:
+        if self.params.eyelid_follow:
             factor = self.params.eyelid_follow_default
 
             self.make_driver(
-                con_x, 'influence', expression=f'var*{factor[0]}',
-                variables=[(ctrl.target, 'lid_follow')]
-            )
-            self.make_driver(
-                con_z, 'influence', expression=f'var*{factor[1]}',
+                con_z, 'influence', expression=f'var*{factor}',
                 variables=[(ctrl.target, 'lid_follow')]
             )
 
@@ -383,75 +318,31 @@ class Rig(BaseSkinRig):
             description="Create a deform bone for the copy"
         )
 
-        params.eyelid_detach_option = bpy.props.BoolProperty(
-            name="Eyelid Detach Option",
-            default=False,
-            description="Create an option to detach eyelids from the eye surface"
-        )
-
-        params.eyelid_follow_split = bpy.props.BoolProperty(
+        params.eyelid_follow= bpy.props.BoolProperty(
             name="Split Eyelid Follow Slider",
             default=False,
-            description="Create separate eyelid follow influence sliders for X and Z"
+            description="Create eyelid follow influence slider"
         )
 
-        params.eyelid_follow_default = bpy.props.FloatVectorProperty(
-            size=2,
+        params.eyelid_follow_default = bpy.props.FloatProperty(
             name="Eyelids Follow Default",
-            default=(0.2, 0.7), min=0, max=1,
-            description="Default setting for the Eyelids Follow sliders (X and Z)",
+            default= 0.7, min=0, max=1,
+            description="Default setting for the Eyelids Follow slider",
         )
-
 
     @classmethod
     def parameters_ui(self, layout, params):
         col = layout.column()
         col.prop(params, "make_deform", text="Eyball And Iris Deforms")
-        col.prop(params, "eyelid_detach_option")
 
-        col.prop(params, "eyelid_follow_split")
+
+        col.prop(params, "eyelid_follow")
 
         row = col.row(align=True)
-        row.prop(params, "eyelid_follow_default", index=0, text="Follow X", slider=True)
-        row.prop(params, "eyelid_follow_default", index=1, text="Follow Z", slider=True)
+        row.prop(params, "eyelid_follow_default", index=0, text="Follow influence", slider=True)
 
 
-'''
-class EyelidChainPatch(RigComponent):
-    """Component injected into child chains to twist handles aiming Z axis at the eye center."""
 
-    rigify_sub_object_run_late = True
-
-    def __init__(self, owner, eye):
-        super().__init__(owner)
-
-        self.eye = eye
-        self.owner.use_pre_handles = True
-
-    def align_bone(self, name):
-        """Align bone rest orientation to aim Z axis at the eye center."""
-        align_bone_z_axis(self.obj, name, self.eye.center - self.get_bone(name).head)
-
-    def prepare_bones(self):
-        for org in self.owner.bones.org:
-            self.align_bone(org)
-
-    def generate_bones(self):
-        if self.owner.use_bbones:
-            mch = self.owner.bones.mch
-            for pre in [*mch.handles_pre, *mch.handles]:
-                self.align_bone(pre)
-
-    def rig_bones(self):
-        if self.owner.use_bbones:
-            for pre, node in zip(self.owner.bones.mch.handles_pre, self.owner.control_nodes):
-                self.make_constraint(pre, 'COPY_LOCATION', node.control_bone, name='locate_cur')
-                self.make_constraint(
-                    pre, 'LOCKED_TRACK', self.eye.bones.org, name='track_center',
-                    track_axis='TRACK_Z', lock_axis='LOCK_Y',
-                )
-
-'''
 class EyeClusterControl(RigComponent):
     """Component generating a common control for an eye cluster."""
 
@@ -632,7 +523,7 @@ def create_eye_cluster_widget(geom, *, size=1, points):
     hpoints = [points[i] for i in mathutils.geometry.convex_hull_2d(points)]
 
     # generate_circle_hull_geometry(geom, hpoints, size*0.75, size*0.6,  matrix=mat_rot)
-    generate_circle_hull_geometry(geom, hpoints, size, size*0.85, matrix=mat_rot)
+    generate_circle_hull_geometry(geom, hpoints, size   , size*0.85, matrix=mat_rot)
 
 
 def create_sample(obj):
