@@ -146,7 +146,7 @@ class Rig(BaseSkinRig):
 
     ####################################################
     # CHILD CHAINS
-    '''
+    
     def init_child_chains(self):
         self.child_chains = [rig for rig in self.rigify_children if isinstance(rig, BasicChainRig)]
 
@@ -156,7 +156,7 @@ class Rig(BaseSkinRig):
 
     def patch_chain(self, child):
         return EyelidChainPatch(child, self)
-
+    '''
     ####################################################
     # CONTROL NODES
 
