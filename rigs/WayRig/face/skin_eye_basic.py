@@ -189,7 +189,7 @@ class Rig(BaseSkinRig):
 
         if self.params.eyelid_follow:
             self.make_property(
-                target, 'lid_follow', (self.params.eyelid_follow_default),
+                target, 'lid_follow', (self.params.eyelid_follow_factor),
                 description='Eylids follow eye movement'
             )
 
@@ -261,7 +261,7 @@ class Rig(BaseSkinRig):
 
         # Apply follow slider influence(s)
         if self.params.eyelid_follow:
-            factor = self.params.eyelid_follow_default
+            factor = self.params.eyelid_follow_factor
 
             self.make_driver(
                 con_z, 'influence', expression=f'var*{factor}',
@@ -284,23 +284,25 @@ class Rig(BaseSkinRig):
         deform = self.bones.deform
         deform.master = self.copy_bone(org, make_derived_name(org, 'def', '_master'), scale=3/2)
 
-        if self.params.make_deform:
+        if self.params.make_deform_eye:
             deform.eye = self.copy_bone(org, make_derived_name(org, 'def'))
-            deform.iris = self.copy_bone(org, make_derived_name(org, 'def', '_iris'), scale=1/2)
-            put_bone(self.obj, deform.iris, self.get_bone(org).tail)
+            if self.params.make_deform_iris:
+                deform.iris = self.copy_bone(org, make_derived_name(org, 'def', '_iris'), scale=1/2)
+                put_bone(self.obj, deform.iris, self.get_bone(org).tail)
 
     @stage.parent_bones
     def parent_deform_chain(self):
         deform = self.bones.deform
         self.set_bone_parent(deform.master, self.bones.org)
 
-        if self.params.make_deform:
+        if self.params.make_deform_eye:
             self.set_bone_parent(deform.eye, self.bones.mch.master)
-            self.set_bone_parent(deform.iris, deform.eye)
+            if self.params.make_deform_iris:
+                self.set_bone_parent(deform.iris, deform.eye)
 
     @stage.rig_bones
     def rig_deform_chain(self):
-        if self.params.make_deform:
+        if self.params.make_deform_iris:
             # Copy XZ local scale from the eye target control
             self.make_constraint(
                 self.bones.deform.iris, 'COPY_SCALE', self.bones.ctrl.target,
@@ -312,34 +314,42 @@ class Rig(BaseSkinRig):
 
     @classmethod
     def add_parameters(self, params):
-        params.make_deform = bpy.props.BoolProperty(
-            name="Deform",
+        params.make_deform_eye = bpy.props.BoolProperty(
+            name="Deform Eye",
             default=True,
-            description="Create a deform bone for the copy"
+            description="Create a deform bone for the eye"
+        )
+
+        params.make_deform_iris = bpy.props.BoolProperty(
+            name="Deform Iris",
+            default=False,
+            description="Create a deform bone for the iris"
         )
 
         params.eyelid_follow= bpy.props.BoolProperty(
-            name="Split Eyelid Follow Slider",
+            name="Eyelid Follow Slider",
             default=False,
-            description="Create eyelid follow influence slider"
+            description="Create eyelid follow influence slider (otherwise it will follow with influence of 1.0)"
         )
 
-        params.eyelid_follow_default = bpy.props.FloatProperty(
-            name="Eyelids Follow Default",
+        params.eyelid_follow_factor = bpy.props.FloatProperty(
+            name="Eyelids Follow Factor",
             default= 0.7, min=0, max=1,
-            description="Default setting for the Eyelids Follow slider",
+            description="Default factor for the Eyelids Follow slider",
         )
 
     @classmethod
     def parameters_ui(self, layout, params):
         col = layout.column()
-        col.prop(params, "make_deform", text="Eyball And Iris Deforms")
+        col.prop(params, "make_deform_eye", text="Eyeball Deforms")
+        if params.make_deform_eye:
+            col.prop(params, "make_deform_iris", text="Iris Deforms")
 
 
         col.prop(params, "eyelid_follow")
-
-        row = col.row(align=True)
-        row.prop(params, "eyelid_follow_default", index=0, text="Follow influence", slider=True)
+        if params.eyelid_follow:
+            row = col.row(align=True)
+            row.prop(params, "eyelid_follow_factor", index=0, text="Follow influence", slider=True)
 
 
 

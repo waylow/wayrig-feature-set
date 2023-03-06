@@ -9,7 +9,7 @@ from rigify.base_rig import BaseRig
 
 from rigify.utils.naming import strip_org, make_deformer_name, make_derived_name
 from rigify.utils.widgets import layout_widget_dropdown, create_registered_widget
-from rigify.utils.widgets_basic import create_bone_widget
+from ..widgets import create_triangle_widget
 
 from rigify.utils.bones import put_bone, flip_bone
 from ..basic.raw_copy import RelinkConstraintsMixin
@@ -83,24 +83,21 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         # Make a deformation bone (copy of original, child of original).
         bones.deform = self.copy_bone(bones.org, make_deformer_name(self.org_name), bbone=True)
 
-        # Make MCH bone (master of this rig - will be constrained to the eye track later)
-        bones.mch = self.new_bone(make_derived_name(bones.org, 'mch') )
-        bone = self.get_bone(bones.mch)
-        bone.length = self.get_bone(bones.org).length / 2
-
+        # Make MCH bone (master of this rig - will be optionally constrained to the eye track later)
+        bones.mch = self.copy_bone(bones.ctrl, make_derived_name(bones.org, 'mch'), parent=True )
 
     def parent_bones(self):
         bones = self.bones
 
         self.set_bone_parent(bones.deform, bones.org, use_connect=False)
-        # parent the org and ctrl bones to the mch bone
-        self.set_bone_parent(bones.org, bones.mch, use_connect=False)
+        # parent the ctrl bone to the mch bone
         self.set_bone_parent(bones.ctrl, bones.mch, use_connect=False)
 
         new_parent = self.relink_bone_parent(bones.org)
 
         if new_parent:
             self.set_bone_parent(bones.mch, new_parent)
+            self.set_bone_parent(bones.org, new_parent)
 
 
     def configure_bones(self):
@@ -112,8 +109,6 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         ctrl.lock_rotation = (True, False, True)
         ctrl.lock_location = (True, True, False)
         ctrl.lock_scale = (True, True, True)
-
-
 
 
     def rig_bones(self):
@@ -133,7 +128,7 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         con.target = self.obj
         con.subtarget = bones.ctrl
         con.use_motion_extrapolate = True
-        con.target_space = 'LOCAL'
+        con.target_space = 'LOCAL_WITH_PARENT'
         con.owner_space = 'LOCAL'
 
         con.map_from = 'LOCATION'
@@ -159,13 +154,25 @@ class Rig(BaseRig, RelinkConstraintsMixin):
 
         self.relink_move_constraints(bones.org, bones.deform, prefix='DEF:')
 
+        # if the clamshell should be constrained to the eye-track
+        if self.params.constrain_to_eyetrack:
+            con = self.make_constraint(bones.mch, 'COPY_LOCATION')
+            con.name = 'lid_follow'
+            con.target = self.obj
+            con.subtarget = self.params.track_bone
+            con.use_x = False
+            con.use_y = False
+            con.target_space = 'LOCAL_WITH_PARENT'
+            con.owner_space = 'LOCAL'
+
 
     def generate_widgets(self):
         bones = self.bones
-
+        size = 0.5
+        if self.params.flip_widget:
+            size *= -1
         # Create control widget
-        
-        create_registered_widget(self.obj, bones.ctrl, self.params.super_copy_widget_type or 'circle')
+        create_triangle_widget(self.obj, bones.ctrl, size=size)
         
         # create_bone_widget(self.obj, bones.ctrl)
 
@@ -175,7 +182,23 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         """ Add the parameters of this rig type to the
             RigifyParameters PropertyGroup
         """
+        params.constrain_to_eyetrack= bpy.props.BoolProperty(
+            name="Constrain to Eye Track",
+            default=False,
+            description="Constrain to (basic_eye rig) eye track control (eye lid follow must be enabled on that rig)"
+        )
 
+        params.track_bone= bpy.props.StringProperty(
+            name="Eye Track Bone Name",
+            default='',
+            description="The name of the bone the damped track to target (in the basic_eye rig)"
+        )
+
+        params.flip_widget= bpy.props.BoolProperty(
+            name="Flip widget",
+            default=False,
+            description="Flip the triangle widget",
+        )
         self.add_relink_constraints_params(params)
 
 
@@ -183,15 +206,19 @@ class Rig(BaseRig, RelinkConstraintsMixin):
     def parameters_ui(self, layout, params):
         """ Create the ui for the rig parameters.
         """
+        col = layout.column()
+        col.prop(params, "constrain_to_eyetrack", text="Constrain to eye track")
+        if params.constrain_to_eyetrack:
+            col.prop(params, "track_bone", text="Eye track bone")
+
+        col.prop(params, "flip_widget", text="Flip Widget")
 
         self.add_relink_constraints_ui(layout, params)
 
         if params.relink_constraints:
             col = layout.column()
-            if params.make_control:
-                col.label(text="'CTRL:...' constraints are moved to the control bone.", icon='INFO')
-            if params.make_deform:
-                col.label(text="'DEF:...' constraints are moved to the deform bone.", icon='INFO')
+            col.label(text="'CTRL:...' constraints are moved to the control bone.", icon='INFO')
+            col.label(text="'DEF:...' constraints are moved to the deform bone.", icon='INFO')
 
 
 def create_sample(obj):
