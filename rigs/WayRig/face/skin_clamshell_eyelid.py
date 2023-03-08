@@ -84,19 +84,19 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         bones.deform = self.copy_bone(bones.org, make_deformer_name(self.org_name), bbone=True)
 
         # Make MCH bone (master of this rig - will be optionally constrained to the eye track later)
-        bones.mch = self.copy_bone(bones.ctrl, make_derived_name(bones.org, 'mch'), parent=True )
+        # bones.mch = self.copy_bone(bones.ctrl, make_derived_name(bones.org, 'mch'), parent=True )
 
     def parent_bones(self):
         bones = self.bones
 
         self.set_bone_parent(bones.deform, bones.org, use_connect=False)
         # parent the ctrl bone to the mch bone
-        self.set_bone_parent(bones.ctrl, bones.mch, use_connect=False)
+        # self.set_bone_parent(bones.ctrl, bones.mch, use_connect=False)
 
         new_parent = self.relink_bone_parent(bones.org)
 
         if new_parent:
-            self.set_bone_parent(bones.mch, new_parent)
+            # self.set_bone_parent(bones.mch, new_parent)
             self.set_bone_parent(bones.org, new_parent)
 
 
@@ -128,7 +128,7 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         con.target = self.obj
         con.subtarget = bones.ctrl
         con.use_motion_extrapolate = True
-        con.target_space = 'LOCAL_WITH_PARENT'
+        con.target_space = 'LOCAL'
         con.owner_space = 'LOCAL'
 
         con.map_from = 'LOCATION'
@@ -154,16 +154,16 @@ class Rig(BaseRig, RelinkConstraintsMixin):
 
         self.relink_move_constraints(bones.org, bones.deform, prefix='DEF:')
 
-        # if the clamshell should be constrained to the eye-track
-        if self.params.constrain_to_eyetrack:
-            con = self.make_constraint(bones.mch, 'COPY_LOCATION')
-            con.name = 'lid_follow'
-            con.target = self.obj
-            con.subtarget = self.params.track_bone
-            con.use_x = False
-            con.use_y = False
-            con.target_space = 'LOCAL_WITH_PARENT'
-            con.owner_space = 'LOCAL'
+        # # if the clamshell should be constrained to the eye-track
+        # if self.params.constrain_to_eyetrack:
+        #     con = self.make_constraint(bones.mch, 'COPY_LOCATION')
+        #     con.name = 'lid_follow'
+        #     con.target = self.obj
+        #     con.subtarget = self.params.track_bone
+        #     con.use_x = False
+        #     con.use_y = False
+        #     con.target_space = 'LOCAL_WITH_PARENT'
+        #     con.owner_space = 'LOCAL'
 
 
     def generate_widgets(self):
