@@ -416,7 +416,7 @@ class EyeClusterControl(RigComponent):
         tail = self.inv_matrix @ bone.tail
         axis = tail - head
 
-        return head + axis * (-head.z / axis.z)
+        return head + axis * (-head.y / axis.y)
 
     def get_common_rig_name(self):
         """Choose a name for the cluster control based on the members."""
