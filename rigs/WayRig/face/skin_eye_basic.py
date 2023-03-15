@@ -508,6 +508,9 @@ class EyeClusterControl(RigComponent):
         # When the cluster master control is selected, show sliders for all eyes
         if self.rig_count > 1:
             panel = self.owner.script.panel_with_selected_check(self.owner, [self.master_bone])
+            # Euler Eyes Master
+            master = self.get_bone(self.master_bone)
+            master.rotation_mode = 'XYZ'
 
             for rig in self.rig_list:
                 rig.add_ui_sliders(panel, add_name=True)
