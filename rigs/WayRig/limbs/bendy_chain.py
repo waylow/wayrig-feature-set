@@ -8,7 +8,7 @@ from rigify.utils.bones import align_chain_x_axis, put_bone
 from rigify.utils.widgets_basic import create_circle_widget
 from rigify.utils.layers import ControlLayersOption
 from rigify.utils.naming import strip_org, make_derived_name
-from rigify.utils.misc import map_list
+from rigify.utils.misc import map_list, pairwise_nozip, padnone
 from rigify.utils.mechanism import driver_var_transform
 
 from rigify.base_rig import stage
@@ -66,15 +66,13 @@ class Rig(TweakChainRig):
         # Backward compatibility
         self.get_bone(tweak).rotation_mode = 'XYZ'
 
-    @stage.configure_bones
+
     def configure_fk_controls(self):
-
         orgs = self.bones.org
-
         for fk in orgs:
             self.get_bone(strip_org(fk)).rotation_mode = 'XYZ'
 
-    @stage.configure_bones
+
     def configure_tweak_chain(self):
         for args in zip(count(0), self.bones.ctrl.tweak):
             self.configure_tweak_bone(*args)
@@ -86,13 +84,23 @@ class Rig(TweakChainRig):
         if i == len(self.bones.org):
             tweak_pb.lock_rotation_w = False
             tweak_pb.lock_rotation = (False, False, False)
-            tweak_pb.lock_scale = (False, False, False)
+            tweak_pb.lock_scale = (False, True, False)
         else:
             tweak_pb.lock_rotation_w = False
             tweak_pb.lock_rotation = (False, False, False)
-            tweak_pb.lock_scale = (False, False, False)
+            tweak_pb.lock_scale = (False, True, False)
 
+        if i > 0:
+            self.make_rubber_tweak_property(i, tweak)
 
+    def make_rubber_tweak_property(self, i, tweak):
+        defval = 1.0
+        text = 'Rubber Tweak'
+
+        self.make_property(tweak, 'rubber_tweak', defval, max=2.0, soft_max=1.0)
+
+        panel = self.script.panel_with_selected_check(self, [tweak])
+        panel.custom_prop(tweak, 'rubber_tweak', text=text, slider=True)
 
     # Rig
     @stage.rig_bones
@@ -120,7 +128,6 @@ class Rig(TweakChainRig):
         con = self.make_constraint(
             mch, 'COPY_TRANSFORMS', tweak,
         )
-        # con.influence = 0.5
 
     @stage.parent_bones
     def parent_mch_handles(self):
@@ -135,6 +142,37 @@ class Rig(TweakChainRig):
     
     ##############################
     # Deform chain
+
+    @stage.rig_bones
+    def rig_deform_chain(self):
+        deform_bones = self.bones.deform
+        tweaks = self.bones.ctrl.tweak
+        next_tweaks = tweaks[1:]
+
+        for args in zip(count(0), deform_bones, tweaks, next_tweaks):
+            self.rig_deform_bone(*args)
+
+
+    def rig_deform_bone(self, i, deform, tweak, next_tweak):
+
+        self.make_constraint(deform, 'COPY_TRANSFORMS', self.bones.org[i])
+        self.rig_deform_easing(i, deform, tweak, next_tweak)
+
+
+    def rig_deform_easing(self, i, deform, tweak, next_tweak):
+        pbone = self.get_bone(deform)
+
+        if 'rubber_tweak' in self.get_bone(tweak):
+            self.make_driver(pbone.bone, 'bbone_easein', variables=[(tweak, 'rubber_tweak')])
+        else:
+            pbone.bone.bbone_easein = 0.0
+
+        if 'rubber_tweak' in self.get_bone(next_tweak):
+            self.make_driver(pbone.bone, 'bbone_easeout', variables=[(next_tweak, 'rubber_tweak')])
+        else:
+            pbone.bone.bbone_easeout = 0.0
+
+
     @stage.configure_bones
     def configure_def_bones(self):
         deform_bones = self.bones.deform
@@ -162,7 +200,6 @@ class Rig(TweakChainRig):
         self.obj.data.bones[deform].bbone_handle_type_end = 'TANGENT'
         self.obj.data.bones[deform].bbone_custom_handle_end = self.obj.data.bones[end_handle]
         self.obj.pose.bones[deform].bone.bbone_handle_use_scale_end = [True, False, True]
- 
 
        
     ##############################
