@@ -142,6 +142,15 @@ class Rig(TweakChainRig):
         end_handles = start_handles[1:]
         for args in zip(count(0), deform_bones, start_handles, end_handles):
             self.configure_def_bone(*args)
+        
+        #add preserve volume slider to the first control only
+        if self.params.make_preserve_volume:
+            ctrl=self.bones.ctrl
+            panel = self.script.panel_with_selected_check(self, [*ctrl.fk, *ctrl.tweak])
+            text = 'Preserve Volume'
+            self.make_property(ctrl.fk[0], 'volume_preserve', 1.0, description='Preserve volume in stretch')
+            panel.custom_prop(ctrl.fk[0], 'volume_preserve', text=text, slider=True)
+
 
     def configure_def_bone(self, i, deform, start_handle, end_handle):
         # Start Handle
@@ -167,6 +176,7 @@ class Rig(TweakChainRig):
         target_scale = driver_var_transform(self.obj, end_handle, type='SCALE_Z', space='LOCAL')
         driver = self.make_driver(deform, 'bbone_scaleout', index=2, type='SUM', variables=[target_scale] )
 
+
     ##############################
     # ORG chain
     @stage.rig_bones
@@ -174,6 +184,9 @@ class Rig(TweakChainRig):
         parent_bone = self.get_bone(self.bones.org[0]).parent.name
         for org in self.bones.org:
             self.make_constraint(org, 'COPY_SCALE', parent_bone, insert_index=1 )
+            if self.params.make_preserve_volume:
+                con = self.obj.pose.bones[org].constraints['Stretch To']
+                self.make_driver(con, 'bulge', variables=[(self.obj.pose.bones[self.bones.ctrl.fk[0]], 'volume_preserve')])
 
 
     # Widgets
@@ -192,6 +205,11 @@ class Rig(TweakChainRig):
             default=tuple([i == 0 for i in range(0, 3)])
             )
 
+        params.make_preserve_volume = bpy.props.BoolProperty(
+            name="Preserve Volume", default=True,
+            description="Create slider for volume preservation"
+        )
+
         # Setting up extra tweak layers
         ControlLayersOption.TWEAK.add_parameters(params)
 
@@ -203,6 +221,8 @@ class Rig(TweakChainRig):
     def parameters_ui(self, layout, params):
         """ Create the ui for the rig parameters.
         """
+        r = layout.row()
+        r.prop(params, "make_preserve_volume")
 
         r = layout.row()
         r.prop(params, "roll_alignment")
@@ -222,23 +242,21 @@ def create_sample(obj):
     bones = {}
 
     bone = arm.edit_bones.new('Bone_01')
-    bone.head[:] = 0.0000, 0.0000, 0.0000
-    bone.tail[:] = 0.0000, 0.0000, 0.3333
+    bone.head = 0.0000, 0.0000, 0.0000
+    bone.tail = 0.0000, 0.0000, 0.3333
     bone.roll = 0.0000
     bone.use_connect = False
     bones['Bone_01'] = bone.name
-
     bone = arm.edit_bones.new('Bone_02')
-    bone.head[:] = 0.0000, 0.0000, 0.3333
-    bone.tail[:] = 0.0000, 0.0000, 0.6667
+    bone.head = 0.0000, 0.0000, 0.3333
+    bone.tail = 0.0000, 0.0000, 0.6667
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['Bone_01']]
     bones['Bone_02'] = bone.name
-
     bone = arm.edit_bones.new('Bone_03')
-    bone.head[:] = 0.0000, 0.0000, 0.6667
-    bone.tail[:] = 0.0000, 0.0000, 1.0000
+    bone.head = 0.0000, 0.0000, 0.6667
+    bone.tail = 0.0000, 0.0000, 1.0000
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['Bone_02']]
@@ -246,12 +264,20 @@ def create_sample(obj):
 
     bpy.ops.object.mode_set(mode='OBJECT')
     pbone = obj.pose.bones[bones['Bone_01']]
-    pbone.rigify_type = 'WayRig.limbs.simple_tentacle'
+    pbone.rigify_type = 'WayRig.limbs.tentacle'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    try:
+        pbone.rigify_parameters.tweak_layers_extra = True
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.copy_rotation_axes = [False, False, False]
+    except AttributeError:
+        pass
     pbone = obj.pose.bones[bones['Bone_02']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -277,6 +303,7 @@ def create_sample(obj):
         bone.select = True
         bone.select_head = True
         bone.select_tail = True
+        bone.bbone_x = bone.bbone_z = bone.length * 0.05
         arm.edit_bones.active = bone
 
     return bones
