@@ -156,27 +156,15 @@ class Rig(TweakChainRig):
         # Start Handle
         self.obj.data.bones[deform].bbone_handle_type_start = 'TANGENT'
         self.obj.data.bones[deform].bbone_custom_handle_start = self.obj.data.bones[start_handle]
+        self.obj.pose.bones[deform].bone.bbone_handle_use_scale_start = [True, False, True]
+
         # End Handle
         self.obj.data.bones[deform].bbone_handle_type_end = 'TANGENT'
         self.obj.data.bones[deform].bbone_custom_handle_end = self.obj.data.bones[end_handle]
+        self.obj.pose.bones[deform].bone.bbone_handle_use_scale_end = [True, False, True]
+ 
 
-        # bbone scale IN X driver
-        target_scale = driver_var_transform(self.obj, start_handle, type='SCALE_X', space='LOCAL')
-        driver = self.make_driver(deform, 'bbone_scalein', index=0, type='SUM', variables=[target_scale] )
-
-        # bbone scale IN Z driver
-        target_scale = driver_var_transform(self.obj, start_handle, type='SCALE_Z', space='LOCAL')
-        driver = self.make_driver(deform, 'bbone_scalein', index=2, type='SUM', variables=[target_scale] )
-
-        # bbone scale OUT X driver
-        target_scale = driver_var_transform(self.obj, end_handle, type='SCALE_X', space='LOCAL')
-        driver = self.make_driver(deform, 'bbone_scaleout', index=0, type='SUM', variables=[target_scale] )
-
-        # bbone scale OUT  Z driver
-        target_scale = driver_var_transform(self.obj, end_handle, type='SCALE_Z', space='LOCAL')
-        driver = self.make_driver(deform, 'bbone_scaleout', index=2, type='SUM', variables=[target_scale] )
-
-
+       
     ##############################
     # ORG chain
     @stage.rig_bones
