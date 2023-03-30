@@ -18,7 +18,7 @@ from rigify.utils.widgets_basic import create_circle_widget, create_sphere_widge
 from rigify.rigs.widgets import create_gear_widget
 from ..widgets import create_ikarrow_widget
 
-from rigify.rig_ui_template import UTILITIES_FUNC_COMMON_IKFK
+from rigify.rig_ui_template import UTILITIES_FUNC_COMMON_IK_FK
 
 from math import pi
 from itertools import count, chain
@@ -1063,7 +1063,7 @@ class BaseLimbRig(BaseRig):
 
 SCRIPT_REGISTER_OP_SNAP_IK_FK = ['POSE_OT_rigify_limb_ik2fk', 'POSE_OT_rigify_limb_ik2fk_bake']
 
-SCRIPT_UTILITIES_OP_SNAP_IK_FK = UTILITIES_FUNC_COMMON_IKFK + ['''
+SCRIPT_UTILITIES_OP_SNAP_IK_FK = UTILITIES_FUNC_COMMON_IK_FK + ['''
 ########################
 ## Limb Snap IK to FK ##
 ########################

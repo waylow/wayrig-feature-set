@@ -12,7 +12,7 @@ from rigify.utils.naming import make_derived_name
 from rigify.utils.misc import matrix_from_axis_roll, matrix_from_axis_pair
 from rigify.utils.widgets import adjust_widget_transform_mesh
 
-from rigify.rigs.widgets import create_foot_widget, create_ballsocket_widget
+from rigify.rigs.widgets import create_foot_widget, create_ball_socket_widget
 from rigify.utils.widgets_basic import create_sphere_widget
 from rigify.base_rig import stage
 
@@ -196,7 +196,7 @@ class Rig(BaseLimbRig):
     @stage.generate_widgets
     def make_ik_spin_control_widget(self):
         if self.pivot_type == 'ANKLE_TOE':
-            obj = create_ballsocket_widget(self.obj, self.bones.ctrl.ik_spin, size=0.75)
+            obj = create_ball_socket_widget(self.obj, self.bones.ctrl.ik_spin, size=0.75)
             rotfix = Matrix.Rotation(math.pi/2, 4, self.main_axis.upper())
             adjust_widget_transform_mesh(obj, rotfix, local=True)
 
@@ -223,7 +223,7 @@ class Rig(BaseLimbRig):
 
     @stage.generate_widgets
     def generate_heel_control_widget(self):
-        create_ballsocket_widget(self.obj, self.bones.ctrl.heel)
+        create_ball_socket_widget(self.obj, self.bones.ctrl.heel)
 
     ####################################################
     # IK toe control
