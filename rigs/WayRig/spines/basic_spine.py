@@ -296,7 +296,7 @@ class Rig(BaseSpineRig):
 
 
         params.make_preserve_volume = bpy.props.BoolProperty(
-            name="Preserve Volume", default=True,
+            name="Preserve Volume Slider", default=True,
             description="Create slider for volume preservation"
         )
 
