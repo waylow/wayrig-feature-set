@@ -326,6 +326,13 @@ class Rig(BasicChainRig):
                     self.set_bone_parent(make_derived_name(org, 'mch', '_poffset'), 'Tongue_master', use_connect=False, inherit_scale='FULL')
 
             self.obj.pose.bones['Tongue_master'].rotation_mode = 'XYZ'
+    
+    @stage.rig_bones
+    def fix_bone_scale(self):
+        # override the default scale options for the org bones (default skin rig sets this to average)
+        if self.params.skin_chain_disable_volume:
+            for org in self.bones.org:
+                self.obj.pose.bones[org].bone.inherit_scale="ALIGNED" 
 
 
     @stage.generate_widgets
@@ -346,11 +353,18 @@ class Rig(BasicChainRig):
             default=True,
             description='World align all generated controls'
         )
+
         params.add_tongue_master = bpy.props.BoolProperty(
             name='Add Tongue Master',
             default=True,
             description='Add tongue master control'
         )
+
+        params.make_preserve_volume = bpy.props.BoolProperty(
+            name="Preserve Volume Slider", default=True,
+            description="Create slider for volume preservation"
+        )
+
         params.skin_chain_pivot_pos = bpy.props.IntProperty(
             name='Middle Control Position',
             default=0,
