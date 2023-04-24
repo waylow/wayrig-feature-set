@@ -142,6 +142,11 @@ class Rig(BaseSpineRig):
                 hips = map_list(self.make_control_bone, count(0), orgs[0:self.pivot_position], repeat(True)),
                 chest = map_list(self.make_control_bone, count(self.pivot_position), orgs[self.pivot_position:], repeat(False)),
             )
+        else:
+            self.bones.ctrl.fk = self.fk_result = BoneDict(
+                hips = [],
+                chest = [],
+            )
 
     def make_control_bone(self, i, org, is_hip):
         name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_FK'), parent=False)

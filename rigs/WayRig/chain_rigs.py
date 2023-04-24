@@ -141,10 +141,10 @@ class TweakChainRig(SimpleChainRig):
 
     def make_tweak_bone(self, i, org):
         if i < len(self.bones.org):
-            name = self.copy_bone(org, strip_org(org) + '_tweak', parent=False, scale=0.5)
+            name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_tweak'), parent=False, scale=0.5)
 
         if i == len(self.bones.org):
-            name = self.copy_bone(org, strip_org(org) + '_end_tweak', parent=False, scale=0.5)
+            name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_end_tweak'), parent=False, scale=0.5)
             put_bone(self.obj, name, self.get_bone(org).tail)
 
         return name
