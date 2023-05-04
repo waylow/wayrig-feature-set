@@ -37,6 +37,7 @@ class Rig(TweakChainRig):
 
     def make_mch_handle(self, i, org):
         if i < len(self.bones.org):
+            
             name = self.copy_bone(org, make_derived_name(org, 'mch', '_tweak'), parent=False, scale=0.5)
 
         if i == len(self.bones.org):
