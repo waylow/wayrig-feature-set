@@ -122,7 +122,7 @@ class Rig(BaseLimbRig):
     @stage.generate_bones
     def make_heel_control_bone(self):
         org = self.bones.org.main[2]
-        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_heel_IK'))
+        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_Heel_IK'))
         self.bones.ctrl.heel = name
 
         flip_bone(self.obj, name)

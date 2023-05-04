@@ -434,7 +434,7 @@ class Rig(BaseLimbRig):
             orgs = self.bones.org.main
 
             #Foot DEF
-            foot = self.bones.deform[4]
+            foot = self.bones.deform[-2]
             self.obj.data.bones[foot].bbone_handle_type_start = 'TANGENT'
             self.obj.data.bones[foot].bbone_handle_type_end = 'TANGENT'
             self.obj.data.bones[foot].bbone_custom_handle_start = self.obj.data.bones[orgs[2]]
@@ -444,7 +444,7 @@ class Rig(BaseLimbRig):
             self.obj.data.bones[foot].inherit_scale = 'ALIGNED'
 
             #Toe DEF
-            toe = self.bones.deform[5]
+            toe = self.bones.deform[-1]
             self.obj.data.bones[toe].bbone_handle_type_start = 'TANGENT'
             self.obj.data.bones[toe].bbone_handle_type_end = 'TANGENT'
             self.obj.data.bones[toe].bbone_custom_handle_start = self.obj.data.bones[make_derived_name(orgs[3], 'mch', '_handle_start')]
@@ -473,22 +473,24 @@ class Rig(BaseLimbRig):
         if self.params.make_bendable_foot:
             orgs = self.bones.org.main
             #Foot DEF
-            foot = self.bones.deform[4]
+            foot = self.bones.deform[-2]
             con = self.obj.pose.bones[foot].constraints['Stretch To']
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
 
             con = self.obj.pose.bones[foot].constraints['Copy Transforms']
-            con.mute = True
+
 
             #Toe DEF
-            toe = self.bones.deform[5]
+            toe = self.bones.deform[-1]
             con = self.obj.pose.bones[toe].constraints.new(type='STRETCH_TO')
             con.target = self.obj
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_02_tweak')
-            con.target = self.obj
+            con.keep_axis = 'PLANE_X'
+
 
             con = self.obj.pose.bones[toe].constraints['Copy Transforms']
-            con.mute = True
+            con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
+
 
 
     @stage.generate_widgets
