@@ -477,11 +477,24 @@ class Rig(BaseLimbRig):
             con = self.obj.pose.bones[foot].constraints['Stretch To']
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
 
-            con = self.obj.pose.bones[foot].constraints['Copy Transforms']
 
 
             #Toe DEF
             toe = self.bones.deform[-1]
+
+            con = self.obj.pose.bones[toe].constraints.new(type='COPY_LOCATION')
+            con.target = self.obj
+            con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
+            
+            con = self.obj.pose.bones[toe].constraints.new(type='COPY_ROTATION')
+            con.target = self.obj
+            con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
+            con.mix_mode = 'AFTER'
+
+            con = self.obj.pose.bones[toe].constraints.new(type='COPY_SCALE')
+            con.target = self.obj
+            con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
+
             con = self.obj.pose.bones[toe].constraints.new(type='STRETCH_TO')
             con.target = self.obj
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_02_tweak')
@@ -490,6 +503,7 @@ class Rig(BaseLimbRig):
 
             con = self.obj.pose.bones[toe].constraints['Copy Transforms']
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
+            con.mute = True
 
 
 
