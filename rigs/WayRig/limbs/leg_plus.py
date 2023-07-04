@@ -191,8 +191,9 @@ class Rig(BaseLimbRig):
             orgs = self.bones.org.main
             name = make_derived_name(orgs[2], 'ctrl', '_spin_IK')
             tail = self.get_bone(orgs[3]).tail
-            tail.z = 0
-            put_bone(self.obj, name, tail, matrix=self.ik_matrix, scale=0.5)
+            tail_floored = [tail.x, tail.y, 0 ]
+            put_bone(self.obj, name, tail_floored, matrix=self.ik_matrix, scale=0.5)
+
 
 
     @stage.generate_widgets
