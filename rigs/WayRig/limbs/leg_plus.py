@@ -611,7 +611,7 @@ class Rig(BaseLimbRig):
             con.map_to = 'ROTATION'
             con.mix_mode_rot = 'BEFORE'
 
-            con.from_max_x_rot = radians(180)
+            con.from_max_x_rot = radians(150)
             con.to_max_x_rot = radians(180)
 
             # Counter Roll
