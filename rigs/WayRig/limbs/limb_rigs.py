@@ -9,7 +9,7 @@ from bpy.types import PoseBone, EditBone
 from rigify.utils.animation import add_generic_snap_fk_to_ik, add_fk_ik_snap_buttons
 from rigify.utils.rig import connected_children_names
 from rigify.utils.bones import put_bone, align_bone_orientation, set_bone_widget_transform, TypedBoneDict
-from rigify.utils.naming import strip_org, make_derived_name
+from rigify.utils.naming import strip_org, make_derived_name, split_name, combine_name
 from rigify.utils.layers import ControlLayersOption
 from rigify.utils.misc import pairwise_nozip, padnone, map_list
 from ....utils.switch_parent import SwitchParentBuilder
@@ -401,7 +401,7 @@ class BaseLimbRig(BaseRig):
         self.build_ik_parent_switch(SwitchParentBuilder(self.generator))
 
     def make_ik_base_bone(self, orgs: list[str]):
-        return self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_ik'))
+        return self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_IK'))
 
     def make_ik_pole_bone(self, orgs: list[str]):
         if self.params.ik_pole_name == '':
@@ -417,10 +417,10 @@ class BaseLimbRig(BaseRig):
         return name
 
     def make_ik_control_bone(self, orgs: list[str]):
-        return self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_ik'))
+        return self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_IK'))
 
     def make_ik_scale_bone(self, ctrl: str, orgs: list[str]):
-        return self.copy_bone(ctrl, make_derived_name(orgs[2], 'mch', '_ik_scale'), scale=1/2)
+        return self.copy_bone(ctrl, make_derived_name(orgs[2], 'mch', '_IK_scale'), scale=1/2)
 
     def build_ik_pivot(self, ik_name: str, **args) -> CustomPivotControl | None:
         if self.use_ik_pivot:
@@ -522,7 +522,7 @@ class BaseLimbRig(BaseRig):
         self.make_ik_ctrl_widget(ctrl.ik)
 
     def make_ik_base_widget(self, ctrl: str):
-        if self.obj.pose.bones[self.bones.org.main[0]].rigify_type == 'WayRig.limbs.leg':
+        if self.obj.pose.bones[self.bones.org.main[0]].rigify_type == 'WayRig.limbs.leg_plus':
             roll = 0
         else:
             roll = pi
@@ -821,7 +821,11 @@ class BaseLimbRig(BaseRig):
         self.bones.mch.tweak = map_list(self.make_tweak_mch_bone, count(0), self.segment_table_tweak)
 
     def make_tweak_mch_bone(self, _i: int, entry: SegmentEntry):
-        name = make_derived_name(entry.org, 'mch', '_tweak')
+        suffix = '_tweak'
+        if self.segments > 1 and entry.seg_idx is not None:
+            suffix = '_' + str(entry.seg_idx+1).zfill(2) + suffix
+
+        name = make_derived_name(entry.org, 'mch', suffix)
         name = self.copy_bone(entry.org, name, scale=1/(4 * self.segments))
         put_bone(self.obj, name, entry.pos)
         return name
@@ -895,6 +899,10 @@ class BaseLimbRig(BaseRig):
 
     def make_deform_bone(self, _i: int, entry: SegmentEntry):
         name = make_derived_name(entry.org, 'def')
+
+        if self.segments > 1 and entry.seg_idx is not None:
+            parts = split_name(entry.org)
+            name = combine_name(parts, prefix='DEF', base=(parts.base + '_' + str(entry.seg_idx+1).zfill(2)) )
 
         if entry.seg_idx is None:
             name = self.copy_bone(entry.org, name)
