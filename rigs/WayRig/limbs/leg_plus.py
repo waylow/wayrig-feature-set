@@ -480,8 +480,6 @@ class Rig(BaseLimbRig):
             con = self.obj.pose.bones[foot].constraints['Stretch To']
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
 
-
-
             #Toe DEF
             toe = self.bones.deform[-1]
 
@@ -507,7 +505,6 @@ class Rig(BaseLimbRig):
             con = self.obj.pose.bones[toe].constraints['Copy Transforms']
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
             con.mute = True
-
 
 
     @stage.generate_widgets
@@ -536,6 +533,11 @@ class Rig(BaseLimbRig):
             foot_reverse = self.copy_bone(foot, make_derived_name(orgs[2], 'ctrl', '_IK_reverse'))
             flip_bone(self.obj, foot_reverse)
 
+            #MCH-Toe-reverse
+            mch_toe_reverse = self.copy_bone(toe_reverse, make_derived_name(toe_reverse, 'mch'), scale = 0.25)
+            tail = self.get_bone(orgs[3]).tail
+            tail_floored = [tail.x, tail.y, 0 ]
+            put_bone(self.obj, mch_toe_reverse, tail_floored, matrix=self.ik_matrix, scale=0.5)
 
     @stage.parent_bones
     def parent_toe_break_bones(self):
@@ -545,7 +547,9 @@ class Rig(BaseLimbRig):
             roll2 = make_derived_name(heel, 'mch', '_roll2')
 
             #Toe Reverse
-            self.set_bone_parent(make_derived_name(orgs[3], 'ctrl', '_IK_reverse'), roll2, use_connect=False, inherit_scale=None)
+            self.set_bone_parent(make_derived_name(orgs[3], 'mch', '_IK_reverse'), roll2, use_connect=False, inherit_scale=None)
+            #Toe Reverse
+            self.set_bone_parent(make_derived_name(orgs[3], 'ctrl', '_IK_reverse'), make_derived_name(orgs[3], 'mch', '_IK_reverse'), use_connect=False, inherit_scale=None)
            #Foot Reverse
             self.set_bone_parent(make_derived_name(orgs[2], 'ctrl', '_IK_reverse'), roll2, use_connect=False, inherit_scale=None)
             
@@ -576,9 +580,9 @@ class Rig(BaseLimbRig):
         if self.params.make_toe_break:
             orgs = self.bones.org.main
             
-            #Toe Reverse
-            toe_reverse = make_derived_name(orgs[3], 'ctrl', '_IK_reverse')
-            con = self.obj.pose.bones[toe_reverse].constraints.new(type='TRANSFORM')
+            #MCH - Toe Reverse
+            mch_toe_reverse = make_derived_name(orgs[3], 'mch', '_IK_reverse')
+            con = self.obj.pose.bones[mch_toe_reverse].constraints.new(type='TRANSFORM')
             con.target = self.obj
             con.subtarget = self.bones.ctrl.heel
             con.target_space = 'LOCAL'
@@ -595,6 +599,7 @@ class Rig(BaseLimbRig):
 
             #Foot Reverse
             foot_reverse = make_derived_name(orgs[2], 'ctrl', '_IK_reverse')
+            toe_reverse = make_derived_name(orgs[3], 'ctrl', '_IK_reverse')
 
             con = self.obj.pose.bones[foot_reverse].constraints.new(type='COPY_LOCATION')
             con.target = self.obj
@@ -652,7 +657,10 @@ class Rig(BaseLimbRig):
             con.head_tail = 1.0
 
             #Edit the MCH-Toe
-            mch_toe = make_derived_name(orgs[3], 'mch')
+            if self.params.extra_ik_toe:
+                mch_toe = make_derived_name(orgs[3], 'mch', '_IK_parent')
+            else:
+                mch_toe = make_derived_name(orgs[3], 'mch')
             con = self.obj.pose.bones[mch_toe].constraints.new(type='COPY_ROTATION')
             con.target = self.obj
             con.subtarget = toe_reverse
@@ -661,11 +669,6 @@ class Rig(BaseLimbRig):
 
             self.make_driver(con, 'influence', variables=[(self.obj.pose.bones[self.bones.ctrl.master], 'IK_FK')], polynomial=[1.0,-1.0])
 
-
-
-
-
-           
 
 
     ####################################################
