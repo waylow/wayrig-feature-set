@@ -11,7 +11,6 @@ from rigify.utils.widgets_special import create_neck_bend_widget, create_neck_tw
 from ....utils.switch_parent import SwitchParentBuilder
 from rigify.utils.misc import map_list
 
-from rigify.utils.widgets import adjust_widget_transform_mesh
 
 from rigify.base_rig import stage
 
