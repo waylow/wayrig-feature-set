@@ -481,6 +481,7 @@ class BaseLimbRig(BaseRig):
     def set_ik_local_location(self, ctrl: str):
         self.get_bone(ctrl).use_local_location = self.params.ik_local_location
 
+
     @stage.configure_bones
     def configure_ik_controls(self):
         base = self.get_bone(self.bones.ctrl.ik_base)
@@ -539,6 +540,40 @@ class BaseLimbRig(BaseRig):
 
     def make_ik_ctrl_widget(self, ctrl: str):
         raise NotImplementedError()
+
+
+    ####################################################
+    # Extra IK VIS Stuff
+    @stage.generate_bones
+    def make_ik_pole_mch_bone(self):
+        if self.params.ik_pole_name != '':
+            self.copy_bone(self.bones.ctrl.ik_pole, make_derived_name(self.bones.ctrl.ik_pole, 'mch'))
+
+    @stage.parent_bones
+    def parent_ik_pole_mch_bone(self):
+        if self.params.ik_pole_name != '':
+            mch_ik_pole = make_derived_name(self.bones.ctrl.ik_pole, 'mch')
+            self.set_bone_parent(mch_ik_pole, self.bones.ctrl.ik_pole)
+
+    @stage.rig_bones
+    def rig_ik_pole_mch_bone(self):
+        if self.params.ik_pole_name != '':
+            mch_ik_pole = make_derived_name(self.bones.ctrl.ik_pole, 'mch')
+            orgs = self.bones.org.main
+
+            con = self.obj.pose.bones[mch_ik_pole].constraints.new(type='DAMPED_TRACK')
+            con.target = self.obj
+            con.subtarget = 'VIS_'+make_derived_name(orgs[0], 'ctrl', '_IK_pole')
+
+    # Override the bone display
+    @stage.generate_widgets
+    def make_ik_pole_widget_override(self):
+        if self.params.ik_pole_name != '':
+            ik_pole = self.bones.ctrl.ik_pole
+            mch_ik_pole = make_derived_name(self.bones.ctrl.ik_pole, 'mch')
+
+            set_bone_widget_transform(self.obj, ik_pole, mch_ik_pole)
+
 
     ####################################################
     # IK pole visualization
