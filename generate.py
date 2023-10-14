@@ -6,7 +6,8 @@ import time
 
 from rigify.utils.errors import MetarigError
 from rigify.utils.bones import new_bone
-from rigify.utils.layers import ORG_LAYER, MCH_LAYER, DEF_LAYER, ROOT_LAYER
+from rigify.utils.layers import (ORG_COLLECTION, MCH_COLLECTION, DEF_COLLECTION, ROOT_COLLECTION, set_bone_layers,
+                           validate_collection_references)
 from .utils.naming import ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_original_name, change_name_side, get_name_side, Side
 from rigify.utils.widgets import WGT_PREFIX
 from rigify.utils.widgets_special import create_root_widget
