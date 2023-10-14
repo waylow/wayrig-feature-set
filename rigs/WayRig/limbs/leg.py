@@ -456,16 +456,17 @@ class Rig(BaseLimbRig):
 
             # put toe tweak bones on the correct layers
             tweak_bones = [make_derived_name(orgs[3], 'ctrl', '_01_tweak'),make_derived_name(orgs[3], 'ctrl', '_02_tweak')]
-            for bone in tweak_bones:
-                for i, (bl,tl) in enumerate(zip(self.obj.pose.bones[bone].bone.layers, self.params.tweak_layers)):
-                    self.obj.pose.bones[bone].bone.layers[i] = tl
+            if self.params.tweak_layers_extra:
+                tweak_collection = self.params.tweak_coll_refs[0]['name']
+                for bone in tweak_bones:
+                    self.obj.data.collections[tweak_collection].assign(self.obj.pose.bones[bone])
+                    
+                    # Euler the toe tweak controls
+                    self.obj.pose.bones[bone].rotation_mode = 'ZXY'
 
-                # Euler the toe tweak controls
-                self.obj.pose.bones[bone].rotation_mode = 'ZXY'
-
-                # locks on the toe tweak controls
-                self.obj.pose.bones[bone].lock_rotation = [True, False, True]
-                self.obj.pose.bones[bone].lock_scale[1] = True
+                    # locks on the toe tweak controls
+                    self.obj.pose.bones[bone].lock_rotation = [True, False, True]
+                    self.obj.pose.bones[bone].lock_scale[1] = True
 
 
     @stage.rig_bones

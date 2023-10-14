@@ -91,25 +91,25 @@ def create(obj):  # noqa
     add_bone_collection('Face', ui_row=1, color_set_id=3)
     add_bone_collection('Face (Primary)', ui_row=1, color_set_id=3)
     add_bone_collection('Face (Secondary)', ui_row=1, color_set_id=3)
-    add_bone_collection('Torso (IK)', ui_row=2, ui_title='(IK)', color_set_id=4)
-    add_bone_collection('Torso (FK)', ui_row=2, ui_title='(FK)', color_set_id=4)
-    add_bone_collection('Torso (Tweak)', ui_row=2, ui_title='(Tweak)', color_set_id=4)
+    add_bone_collection('Torso (IK)', ui_row=2, color_set_id=4)
+    add_bone_collection('Torso (FK)', ui_row=2, color_set_id=4)
+    add_bone_collection('Torso (Tweak)', ui_row=2, color_set_id=4)
     add_bone_collection('Arm.L (IK)', ui_row=4, color_set_id=2)
-    add_bone_collection('Arm.L (FK)', ui_row=5, ui_title='(FK)', color_set_id=5)
-    add_bone_collection('Arm.L (Tweak)', ui_row=6, ui_title='(Tweak)', color_set_id=4)
-    add_bone_collection('Arm.R (IK)', ui_row=4, color_set_id=2)
-    add_bone_collection('Arm.R (FK)', ui_row=5, ui_title='(FK)', color_set_id=5)
-    add_bone_collection('Arm.R (Tweak)', ui_row=6, ui_title='(Tweak)', color_set_id=4)
-    add_bone_collection('Fingers.L', ui_row=4, color_set_id=2)
-    add_bone_collection('Fingers.L (Tweak)', ui_row=6, ui_title='(Tweak)', color_set_id=4)
-    add_bone_collection('Fingers.R', ui_row=4, color_set_id=2)
-    add_bone_collection('Fingers.R (Tweak)', ui_row=6, ui_title='(Tweak)', color_set_id=4)
-    add_bone_collection('Leg.L (IK)', ui_row=8, color_set_id=2)
-    add_bone_collection('Leg.L (FK)', ui_row=9, ui_title='(FK)', color_set_id=5)
-    add_bone_collection('Leg.L (Tweak)', ui_row=10, ui_title='(Tweak)', color_set_id=4)
-    add_bone_collection('Leg.R (IK)', ui_row=8, color_set_id=2)
-    add_bone_collection('Leg.R (FK)', ui_row=9, ui_title='(FK)', color_set_id=5)
-    add_bone_collection('Leg.R (Tweak)', ui_row=10, ui_title='(Tweak)', color_set_id=4)
+    add_bone_collection('Arm.L (FK)', ui_row=4, color_set_id=5)
+    add_bone_collection('Arm.L (Tweak)', ui_row=4, color_set_id=4)
+    add_bone_collection('Arm.R (IK)', ui_row=5, color_set_id=2)
+    add_bone_collection('Arm.R (FK)', ui_row=5, color_set_id=5)
+    add_bone_collection('Arm.R (Tweak)', ui_row=5, color_set_id=4)
+    add_bone_collection('Fingers.L', ui_row=7, color_set_id=2)
+    add_bone_collection('Fingers.L (Tweak)', ui_row=7, color_set_id=4)
+    add_bone_collection('Fingers.R', ui_row=8, color_set_id=2)
+    add_bone_collection('Fingers.R (Tweak)', ui_row=8, color_set_id=4)
+    add_bone_collection('Leg.L (IK)', ui_row=10, color_set_id=2)
+    add_bone_collection('Leg.L (FK)', ui_row=10, color_set_id=5)
+    add_bone_collection('Leg.L (Tweak)', ui_row=10, color_set_id=4)
+    add_bone_collection('Leg.R (IK)', ui_row=11, color_set_id=2)
+    add_bone_collection('Leg.R (FK)', ui_row=11, color_set_id=5)
+    add_bone_collection('Leg.R (Tweak)', ui_row=11, color_set_id=4)
     add_bone_collection('Root', ui_row=13, color_set_id=1)
 
     bones = {}
@@ -1360,6 +1360,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (IK)')
     pbone = obj.pose.bones[bones['Root']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1367,6 +1368,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Root')
     pbone = obj.pose.bones[bones['Spine_01']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1374,6 +1376,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (IK)')
     pbone = obj.pose.bones[bones['Hip.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1381,6 +1384,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.L (IK)', 'Leg.L (FK)')
     pbone = obj.pose.bones[bones['Hip.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1388,6 +1392,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.R (FK)', 'Leg.R (IK)')
     pbone = obj.pose.bones[bones['Thigh.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1395,6 +1400,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.L (IK)')
     pbone = obj.pose.bones[bones['Thigh.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1402,6 +1408,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.R (IK)')
     pbone = obj.pose.bones[bones['Spine_02']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1409,6 +1416,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (IK)')
     pbone = obj.pose.bones[bones['Shin.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1416,6 +1424,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.L (IK)')
     pbone = obj.pose.bones[bones['Shin.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1423,6 +1432,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.R (IK)')
     pbone = obj.pose.bones[bones['Chest']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1430,6 +1440,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (IK)')
     pbone = obj.pose.bones[bones['Foot.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1437,6 +1448,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.L (IK)')
     pbone = obj.pose.bones[bones['Foot.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1444,6 +1456,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.R (IK)')
     pbone = obj.pose.bones[bones['Neck_01']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1451,6 +1464,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Shoulder.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1458,6 +1472,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.L (IK)', 'Arm.L (FK)')
     pbone = obj.pose.bones[bones['Shoulder.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1465,6 +1480,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.R (IK)', 'Arm.R (FK)')
     pbone = obj.pose.bones[bones['Breast.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1472,6 +1488,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (Tweak)')
     pbone = obj.pose.bones[bones['Breast.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1479,6 +1496,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (Tweak)')
     pbone = obj.pose.bones[bones['Toe.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1486,6 +1504,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.L (IK)')
     pbone = obj.pose.bones[bones['Heel.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1493,6 +1512,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.L (IK)')
     pbone = obj.pose.bones[bones['Toe.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1500,6 +1520,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.R (IK)')
     pbone = obj.pose.bones[bones['Heel.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1507,6 +1528,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Leg.R (IK)')
     pbone = obj.pose.bones[bones['Neck_02']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1514,6 +1536,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Upper_Arm.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1521,6 +1544,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.L (IK)')
     pbone = obj.pose.bones[bones['Upper_Arm.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1528,6 +1552,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.R (IK)')
     pbone = obj.pose.bones[bones['Head']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1535,6 +1560,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Forearm.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1542,6 +1568,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.L (IK)')
     pbone = obj.pose.bones[bones['Forearm.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1549,6 +1576,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.R (IK)')
     pbone = obj.pose.bones[bones['Nose_01.M']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1850,6 +1878,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.L (IK)')
     pbone = obj.pose.bones[bones['Hand.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1857,6 +1886,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Arm.R (IK)')
     pbone = obj.pose.bones[bones['Nose_02.M']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2130,6 +2160,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Palm_02.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2137,6 +2168,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Palm_03.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2144,6 +2176,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Palm_04.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2151,6 +2184,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Palm_01.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2158,6 +2192,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Palm_02.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2165,6 +2200,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Palm_03.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2172,6 +2208,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Palm_04.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2179,6 +2216,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Ear_04.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2305,6 +2343,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Thumb_01.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2312,6 +2351,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_B_01.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2319,6 +2359,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_C_01.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2326,6 +2367,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_D_01.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2333,6 +2375,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_A_01.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2340,6 +2383,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Thumb_01.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2347,6 +2391,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_B_01.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2354,6 +2399,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_C_01.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2361,6 +2407,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_D_01.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2368,6 +2415,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Brow_low_02.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2431,6 +2479,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Thumb_02.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2438,6 +2487,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_B_02.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2445,6 +2495,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_C_02.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2452,6 +2503,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_D_02.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2459,6 +2511,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_A_02.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2466,6 +2519,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Thumb_02.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2473,6 +2527,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_B_02.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2480,6 +2535,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_C_02.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2487,6 +2543,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_D_02.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2494,6 +2551,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Lid_04.B.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2529,6 +2587,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Thumb_03.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2536,6 +2595,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_B_03.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2543,6 +2603,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_C_03.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2550,6 +2611,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_D_03.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2557,6 +2619,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.L')
     pbone = obj.pose.bones[bones['Finger_A_03.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2564,6 +2627,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Thumb_03.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2571,6 +2635,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_B_03.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2578,6 +2643,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_C_03.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2585,6 +2651,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
     pbone = obj.pose.bones[bones['Finger_D_03.R']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -2592,6 +2659,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
+    assign_bone_collections(pbone, 'Fingers.R')
 
     bpy.ops.object.mode_set(mode='EDIT')
     for bone in arm.edit_bones:
