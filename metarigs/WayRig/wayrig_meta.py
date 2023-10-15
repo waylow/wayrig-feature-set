@@ -1360,7 +1360,9 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
-    assign_bone_collections(pbone, 'Torso (IK)')
+    assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Torso (Tweak)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'fk', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Root']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1376,7 +1378,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
-    assign_bone_collections(pbone, 'Torso (IK)')
+    assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Hip.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1416,7 +1418,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
-    assign_bone_collections(pbone, 'Torso (IK)')
+    assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Shin.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1440,7 +1442,7 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
-    assign_bone_collections(pbone, 'Torso (IK)')
+    assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Foot.L']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
