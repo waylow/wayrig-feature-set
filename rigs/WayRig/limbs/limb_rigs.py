@@ -523,7 +523,7 @@ class BaseLimbRig(BaseRig):
         self.make_ik_ctrl_widget(ctrl.ik)
 
     def make_ik_base_widget(self, ctrl: str):
-        if self.obj.pose.bones[self.bones.org.main[0]].rigify_type == 'WayRig.limbs.leg_plus':
+        if self.obj.pose.bones[self.bones.org.main[0]].rigify_type == 'WayRig.limbs.leg':
             roll = 0
         else:
             roll = pi

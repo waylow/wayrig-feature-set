@@ -456,10 +456,11 @@ class Rig(BaseLimbRig):
 
             # put toe tweak bones on the correct layers
             tweak_bones = [make_derived_name(orgs[3], 'ctrl', '_01_tweak'),make_derived_name(orgs[3], 'ctrl', '_02_tweak')]
-            if self.params.tweak_layers_extra:
-                tweak_collection = self.params.tweak_coll_refs[0]['name']
+            if self.params.tweak_layers_extra:                
                 for bone in tweak_bones:
-                    self.obj.data.collections[tweak_collection].assign(self.obj.pose.bones[bone])
+                    if self.params.tweak_coll_refs:
+                        tweak_collection = self.params.tweak_coll_refs[0]['name']
+                        self.obj.data.collections[tweak_collection].assign(self.obj.pose.bones[bone])
                     
                     # Euler the toe tweak controls
                     self.obj.pose.bones[bone].rotation_mode = 'ZXY'
