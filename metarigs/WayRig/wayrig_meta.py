@@ -1394,23 +1394,51 @@ def create(obj):  # noqa
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
-    assign_bone_collections(pbone, 'Leg.R (FK)', 'Leg.R (IK)')
+    assign_bone_collections(pbone, 'Leg.R (IK)', 'Leg.R (FK)')
     pbone = obj.pose.bones[bones['Thigh.L']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'WayRig.limbs.leg'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Leg.L (IK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'fk', 'Leg.L (FK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Leg.L (Tweak)')
+    try:
+        pbone.rigify_parameters.make_bendable_foot = False
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.extra_ik_toe = True
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.ik_pole_name = 'Knee_Pole.L'
+    except AttributeError:
+        pass
     pbone = obj.pose.bones[bones['Thigh.R']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'WayRig.limbs.leg'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Leg.R (IK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'fk', 'Leg.R (FK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Leg.R (Tweak)')
+    try:
+        pbone.rigify_parameters.make_bendable_foot = False
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.extra_ik_toe = True
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.ik_pole_name = 'Knee_Pole.R'
+    except AttributeError:
+        pass
     pbone = obj.pose.bones[bones['Spine_02']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
@@ -1540,21 +1568,33 @@ def create(obj):  # noqa
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Upper_Arm.L']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'WayRig.limbs.arm'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Arm.L (IK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'fk', 'Arm.L (FK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Arm.L (Tweak)')
+    try:
+        pbone.rigify_parameters.ik_pole_name = 'Elbow_Pole.L'
+    except AttributeError:
+        pass
     pbone = obj.pose.bones[bones['Upper_Arm.R']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'WayRig.limbs.arm'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Arm.R (IK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'fk', 'Arm.R (FK)')
+    assign_bone_collection_refs(pbone.rigify_parameters, 'tweak', 'Arm.R (Tweak)')
+    try:
+        pbone.rigify_parameters.ik_pole_name = 'Elbow_Pole.R'
+    except AttributeError:
+        pass
     pbone = obj.pose.bones[bones['Head']]
     pbone.rigify_type = ''
     pbone.lock_location = (False, False, False)
