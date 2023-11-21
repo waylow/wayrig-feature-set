@@ -157,7 +157,7 @@ def create(obj):  # noqa
     bone = arm.edit_bones.new('Thigh.R')
     bone.head = -0.0980, 0.0124, 1.0720
     bone.tail = -0.0980, -0.0286, 0.5372
-    bone.roll = 0.0000
+    bone.roll = -0.0000
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['Pelvis']]
     bones['Thigh.R'] = bone.name
@@ -178,7 +178,7 @@ def create(obj):  # noqa
     bone = arm.edit_bones.new('Shin.R')
     bone.head = -0.0980, -0.0286, 0.5372
     bone.tail = -0.0980, 0.0162, 0.0852
-    bone.roll = 0.0000
+    bone.roll = -0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['Thigh.R']]
     bones['Shin.R'] = bone.name
@@ -1380,7 +1380,7 @@ def create(obj):  # noqa
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Hip.L']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'Wayrig.super_copy'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
@@ -1388,7 +1388,7 @@ def create(obj):  # noqa
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Leg.L (IK)', 'Leg.L (FK)')
     pbone = obj.pose.bones[bones['Hip.R']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'Wayrig.super_copy'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
@@ -1496,7 +1496,7 @@ def create(obj):  # noqa
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Torso (IK)', 'Torso (FK)')
     pbone = obj.pose.bones[bones['Shoulder.L']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'Wayrig.super_copy'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
@@ -1504,7 +1504,7 @@ def create(obj):  # noqa
     pbone.rotation_mode = 'XYZ'
     assign_bone_collections(pbone, 'Arm.L (IK)', 'Arm.L (FK)')
     pbone = obj.pose.bones[bones['Shoulder.R']]
-    pbone.rigify_type = ''
+    pbone.rigify_type = 'Wayrig.super_copy'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
