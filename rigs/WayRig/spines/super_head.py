@@ -433,8 +433,9 @@ class Rig(BaseHeadTailRig):
             # put head tweak bones on the correct layers
             tweak_bones = [make_derived_name(orgs[-1], 'ctrl', '_top_tweak')]
             for bone in tweak_bones:
-                for i, (bl,tl) in enumerate(zip(self.obj.pose.bones[bone].bone.layers, self.params.tweak_layers)):
-                    self.obj.pose.bones[bone].bone.layers[i] = tl
+                if self.params.tweak_coll_refs:
+                        tweak_collection = self.params.tweak_coll_refs[0]['name']
+                        self.obj.data.collections[tweak_collection].assign(self.obj.pose.bones[bone])
 
                 # Euler the tweak controls
                 self.obj.pose.bones[bone].rotation_mode = 'ZXY'
