@@ -426,7 +426,7 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
         self.get_bone(self.control_bone).rotation_mode = 'XYZ'
         if layers:
             bone = self.get_bone(self.control_bone).bone
-            set_bone_layers(bone, layers, not self.is_master_node)
+            set_bone_layers(bone, layers, combine=not self.is_master_node)
 
 
     def rig_bones(self):

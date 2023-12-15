@@ -2,6 +2,8 @@
 
 import bpy
 
+from mathutils import Quaternion
+
 from rigify.utils.naming import make_derived_name
 from rigify.utils.misc import force_lazy, LazyRef
 
@@ -137,18 +139,18 @@ class BaseSkinChainRig(BaseSkinRig):
     ##########################
     # Methods to override
 
-    def get_control_node_rotation(self, node):
+    def get_control_node_rotation(self, node: 'ControlBoneNode') -> Quaternion:
         """
         Returns the rig-specific orientation to use for the given control node of this rig,
         if not overridden by the Orientation Bone option.
         """
         return get_bone_quaternion(self.obj, self.base_bone)
 
-    def get_control_node_layers(self, node):
+    def get_control_node_layers(self, node: 'ControlBoneNode') -> list[bpy.types.BoneCollection]:
         """Returns the armature layers to use for the given control node owned by this rig."""
-        return self.get_bone(self.base_bone).bone.layers
+        return list(self.get_bone(self.base_bone).bone.collections)
 
-    def make_control_node_widget(self, node):
+    def make_control_node_widget(self, node: 'ControlBoneNode'):
         """Called to generate the widget for nodes with ControlNodeIcon.CUSTOM."""
         raise NotImplementedError()
 
