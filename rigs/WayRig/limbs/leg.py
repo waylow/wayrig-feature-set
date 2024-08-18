@@ -313,31 +313,19 @@ class Rig(BaseLimbRig):
         for bone in chain:
             self.get_bone(bone).rotation_mode = self.heel_euler_order
 
+        ## editing this bit to comply with the change in the limit rotation constraint
+        # add driver Heel Mid
+        heel_variable = ( self.obj, heel, '.rotation_euler', 0 )
+        self.make_driver(roll2, 'rotation_euler', index=0, type='SCRIPTED', expression = 'var if var < 0 else 0', variables={heel_variable}, polynomial=[0.0, 1.0])
+        
+        # add driver Heel Rock 1
+        heel_variable = ( self.obj, heel, '.rotation_euler', 1 )
+        self.make_driver(rock1, 'rotation_euler', index=1, type='SCRIPTED', expression = 'var if var > 0 else 0', variables={heel_variable}, polynomial=[0.0, 1.0])
+        # add driver Heel Rock 2
+        self.make_driver(rock2, 'rotation_euler', index =1, type='SCRIPTED', expression = 'var if var < 0 else 0', variables={heel_variable}, polynomial=[0.0, 1.0])
+
+
         self.make_constraint(roll1, 'COPY_ROTATION', heel, space='POSE')
-
-        if self.main_axis == 'x':
-            self.make_constraint(roll2, 'COPY_ROTATION', heel, space='LOCAL', use_xyz=(True, False, False))
-            self.make_constraint(roll2, 'LIMIT_ROTATION', min_x=-DEG_360, space='LOCAL')
-        else:
-            self.make_constraint(roll2, 'COPY_ROTATION', heel, space='LOCAL', use_xyz=(False, False, True))
-            self.make_constraint(roll2, 'LIMIT_ROTATION', min_z=-DEG_360, space='LOCAL')
-
-        direction = self.get_main_axis(self.get_bone(heel)).dot(self.get_bone(org_heel).vector)
-
-        if direction < 0:
-            rock2, rock1 = rock1, rock2
-
-        self.make_constraint(
-            rock1, 'COPY_ROTATION', heel, space='LOCAL',
-            use_xyz=(False, True, False),
-        )
-        self.make_constraint(
-            rock2, 'COPY_ROTATION', heel, space='LOCAL',
-            use_xyz=(False, True, False),
-        )
-
-        self.make_constraint(rock1, 'LIMIT_ROTATION', max_y=DEG_360, space='LOCAL')
-        self.make_constraint(rock2, 'LIMIT_ROTATION', min_y=-DEG_360, space='LOCAL')
 
 
     ####################################################
