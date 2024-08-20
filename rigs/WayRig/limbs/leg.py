@@ -141,6 +141,7 @@ class Rig(BaseLimbRig):
         super().register_switch_parents(pbuilder)
 
         pbuilder.register_parent(self, self.bones.org.main[2], exclude_self=True, tags={'limb_end'})
+        
 
     def make_ik_ctrl_widget(self, ctrl):
         obj = create_foot_widget(self.obj, ctrl)
@@ -541,7 +542,7 @@ class Rig(BaseLimbRig):
 
         params.make_bendable_foot = bpy.props.BoolProperty(
             name='Make Bendable Foot',
-            default=True,
+            default=False,
             description="Add tweaks to the foot, useful for cartoony characters"
         )
 

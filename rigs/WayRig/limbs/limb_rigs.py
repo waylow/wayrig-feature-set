@@ -435,7 +435,7 @@ class BaseLimbRig(BaseRig):
             return self.bones.ctrl.ik
 
     def get_ik_pole_parents(self) -> list[tuple[str, str] | str]:
-        return [(self.bones.mch.ik_target, self.bones.ctrl.ik)]
+        return [(self.bones.ctrl.ik, self.bones.ctrl.ik)]
 
     def register_switch_parents(self, pbuilder: SwitchParentBuilder):
         if self.rig_parent_bone:
@@ -499,6 +499,8 @@ class BaseLimbRig(BaseRig):
     @stage.rig_bones
     def rig_ik_controls(self):
         self.rig_hide_pole_control(self.bones.ctrl.ik_pole)
+        self.rig_hide_pole_control_flipped(self.bones.ctrl.ik_base)
+
 
         if self.use_uniform_scale:
             self.rig_ik_control_scale(self.bones.mch.ik_scale)
@@ -681,7 +683,7 @@ class BaseLimbRig(BaseRig):
         self.make_property(self.prop_bone, 'IK_Stretch', default=1.0, description='IK Stretch')
         panel.custom_prop(self.prop_bone, 'IK_Stretch', text='IK Stretch', slider=True)
 
-        self.make_property(self.prop_bone, 'pole_vector', default=False, description='Use a pole target control')
+        self.make_property(self.prop_bone, 'pole_vector', default=True, description='Use a pole target control')
 
         self.add_ik_only_buttons(panel, rig_name)
 
@@ -767,6 +769,11 @@ class BaseLimbRig(BaseRig):
         self.make_driver(
             self.get_bone(name).bone, "hide",
             variables=[(self.prop_bone, 'pole_vector')], polynomial=[1.0, -1.0],
+        )
+    def rig_hide_pole_control_flipped(self, name: str):
+        self.make_driver(
+            self.get_bone(name).bone, "hide",
+            variables=[(self.prop_bone, 'pole_vector')], polynomial=[0.0, 1.0],
         )
 
     ####################################################
@@ -1060,7 +1067,7 @@ class BaseLimbRig(BaseRig):
 
         params.make_bendable_foot = bpy.props.BoolProperty(
             name='Make Bendable Foot',
-            default=True,
+            default=False,
             description="Add tweaks to the foot, useful for cartoony characters"
         )
         params.ik_pole_name = bpy.props.StringProperty(
@@ -1291,7 +1298,7 @@ class RigifyLimbTogglePoleBase(RigifyLimbIk2FkBase):
 
         # Set the pole property
         set_custom_property_value(
-            obj, self.prop_bone, self.pole_prop, int(self.use_pole),
+            obj, self.prop_bone, self.pole_prop, bool(self.use_pole),
             keyflags=self.keyflags_switch
         )
 
@@ -1310,7 +1317,7 @@ class RigifyLimbTogglePoleBase(RigifyLimbIk2FkBase):
         if self.keyflags is not None:
             if self.use_pole:
                 keyframe_transform_properties(
-                    obj, self.ctrl_bone_list[2], self.keyflags,
+                    obj, self.ctrl_bone_list[1], self.keyflags,
                     no_rot=True, no_scale=True,
                 )
             else:
@@ -1336,11 +1343,11 @@ class POSE_OT_rigify_limb_toggle_pole_bake(RigifyLimbTogglePoleBase, RigifyBakeK
         self.bake_add_bone_frames(self.ctrl_bone_list, TRANSFORM_PROPS_ALL)
 
         rot_curves = self.bake_get_all_bone_curves(self.ctrl_bone_list[0], TRANSFORM_PROPS_ROTATION)
-        pole_curves = self.bake_get_all_bone_curves(self.ctrl_bone_list[2], TRANSFORM_PROPS_LOCATION)
+        pole_curves = self.bake_get_all_bone_curves(self.ctrl_bone_list[1], TRANSFORM_PROPS_LOCATION)
         return rot_curves + pole_curves
 
     def execute_before_apply(self, context, obj, range, range_raw):
-        self.bake_replace_custom_prop_keys_constant(self.prop_bone, self.pole_prop, int(self.use_pole))
+        self.bake_replace_custom_prop_keys_constant(self.prop_bone, self.pole_prop, bool(self.use_pole))
 
     def draw(self, context):
         self.layout.prop(self, 'use_pole')
@@ -1363,9 +1370,10 @@ def add_limb_toggle_pole(panel: 'PanelLayout', *,
     }
 
     row = panel.row(align=True)
-    left_split = row.split(factor=0.75, align=True)
+    left_split = row.split(factor=0.65, align=True)
     left_split.operator('pose.rigify_limb_toggle_pole_{rig_id}',
                         icon='FORCE_MAGNETIC', properties=op_props)
-    left_split.custom_prop(master, 'pole_vector', text='')
+    text = left_split.expr_if_else(left_split.expr_bone(master)['pole_vector'], 'On', 'Off')
+    left_split.custom_prop(master, 'pole_vector', text=text, toggle=True)
     row.operator('pose.rigify_limb_toggle_pole_bake_{rig_id}',
                  text='', icon='ACTION_TWEAK', properties=op_props)
