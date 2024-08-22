@@ -608,6 +608,9 @@ class Generator(base_generate.BaseGenerator):
         # Create Bone Groups
         apply_bone_colors(obj, metarig, self.layer_group_priorities)
 
+        # Change VIS bone colours (WayRig Test)
+        change_vis_bone_color(obj)
+
         t.tick("The rest: ")
 
         ###########################################
@@ -740,6 +743,18 @@ def apply_bone_colors(obj, metarig, priorities: Optional[dict[str, dict[str, flo
             cset.apply(b.bone.color)
             cset.apply(b.color)
 
+def change_vis_bone_color(obj):
+    bpy.ops.object.mode_set(mode='OBJECT')
+    pb = obj.pose.bones
+
+    color = [0.55, 0.55 ,0.55]
+
+    for b in pb:
+        if b.name.startswith("VIS_"):
+            pb[b.name].color.custom.active = color
+            pb[b.name].color.custom.select = color
+            pb[b.name].color.custom.normal = color
+            print(b.name , pb[b.name].color.custom.active)
 
 def get_xy_spread(bones):
     x_max = 0

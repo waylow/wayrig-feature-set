@@ -468,8 +468,6 @@ class Rig(BaseLimbRig):
             con = self.obj.pose.bones[foot].constraints['Stretch To']
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
 
-
-
             #Toe DEF
             toe = self.bones.deform[-1]
 
@@ -491,11 +489,9 @@ class Rig(BaseLimbRig):
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_02_tweak')
             con.keep_axis = 'PLANE_X'
 
-
             con = self.obj.pose.bones[toe].constraints['Copy Transforms']
             con.subtarget = make_derived_name(orgs[3], 'ctrl', '_01_tweak')
             con.mute = True
-
 
 
     @stage.generate_widgets
@@ -505,6 +501,9 @@ class Rig(BaseLimbRig):
             create_sphere_widget(self.obj, make_derived_name(orgs[3], 'ctrl', '_01_tweak'))
             create_sphere_widget(self.obj, make_derived_name(orgs[3], 'ctrl', '_02_tweak'))
 
+
+
+    
 
     ####################################################
     # Settings

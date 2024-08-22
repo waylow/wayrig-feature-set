@@ -1076,7 +1076,6 @@ class BaseLimbRig(BaseRig):
             description="Specify the name of the pole target. (Leave blank to auto generate name)"
         )
 
-
         # Setting up extra layers for the FK and tweak
         ControlLayersOption.FK.add_parameters(params)
         ControlLayersOption.TWEAK.add_parameters(params)
@@ -1102,7 +1101,7 @@ class BaseLimbRig(BaseRig):
         layout.prop(params, 'make_custom_pivot', text="Custom IK Pivot")
         layout.prop(params, 'ik_local_location')
         layout.prop(params, 'ik_pole_name', text="Custom IK Pole Name")
-
+        
         ControlLayersOption.FK.parameters_ui(layout, params)
         ControlLayersOption.TWEAK.parameters_ui(layout, params)
 
