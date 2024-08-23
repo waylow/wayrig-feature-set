@@ -611,6 +611,10 @@ class Generator(base_generate.BaseGenerator):
         # Change VIS bone colours (WayRig Test)
         change_vis_bone_color(obj)
 
+        # override Wire Widget ( WayRig Test)
+        override_wire_width(obj)
+
+
         t.tick("The rest: ")
 
         ###########################################
@@ -754,7 +758,15 @@ def change_vis_bone_color(obj):
             pb[b.name].color.custom.active = color
             pb[b.name].color.custom.select = color
             pb[b.name].color.custom.normal = color
-            print(b.name , pb[b.name].color.custom.active)
+
+def override_wire_width(obj):
+    pb = obj.pose.bones
+
+    for b in pb:
+        if b.custom_shape is not None:
+            pb[b.name].custom_shape_wire_width = 2.0
+
+
 
 def get_xy_spread(bones):
     x_max = 0
