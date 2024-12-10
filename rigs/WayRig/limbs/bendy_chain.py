@@ -73,7 +73,7 @@ class Rig(TweakChainRig):
         for fk in orgs:
             self.get_bone(strip_org(fk)).rotation_mode = 'XYZ'
 
-
+    @stage.configure_bones
     def configure_tweak_chain(self):
         for args in zip(count(0), self.bones.ctrl.tweak):
             self.configure_tweak_bone(*args)

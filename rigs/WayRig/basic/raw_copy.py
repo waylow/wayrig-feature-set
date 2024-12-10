@@ -1,28 +1,43 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
 
-from rigify.utils.naming import strip_org, strip_prefix, choose_derived_bone, is_control_bone, make_derived_name
+from bpy.types import Constraint, ArmatureConstraint, UILayout
+
+from rigify.utils.naming import choose_derived_bone, is_control_bone
 from rigify.utils.mechanism import copy_custom_properties_with_ui, move_all_constraints
 from rigify.utils.widgets import layout_widget_dropdown, create_registered_widget
 
-from rigify.base_rig import BaseRig
-from rigify.base_generate import SubstitutionRig
+from rigify.base_rig import BaseRig, BaseRigMixin
 
 from itertools import repeat
 
-class RelinkConstraintsMixin:
+
+'''
+Due to T80764, bone name handling for 'limbs.raw_copy' was hard-coded in generate.py
+
+class Rig(SubstitutionRig):
+    """ A raw copy rig, preserving the metarig bone as is, without the ORG prefix. """
+
+    def substitute(self):
+        # Strip the ORG prefix during the rig instantiation phase
+        new_name = strip_org(self.base_bone)
+        new_name = self.generator.rename_org_bone(self.base_bone, new_name)
+
+        return [ self.instantiate_rig(InstanceRig, new_name) ]
+'''
+
+
+class RelinkConstraintsMixin(BaseRigMixin):
     """ Utilities for constraint relinking. """
 
-    def relink_bone_constraints(self, bone_name):
+    def relink_bone_constraints(self, bone_name: str):
         if self.params.relink_constraints:
             for con in self.get_bone(bone_name).constraints:
                 self.relink_single_constraint(con)
 
-
     relink_unmarked_constraints = False
 
-    def relink_single_constraint(self, con):
+    def relink_single_constraint(self, con: Constraint):
         if self.params.relink_constraints:
             parts = con.name.split('@')
 
@@ -31,41 +46,28 @@ class RelinkConstraintsMixin:
             elif self.relink_unmarked_constraints:
                 self.relink_constraint(con, [''])
 
-
-    def relink_move_constraints(self, from_bone, to_bone, *, prefix=''):
+    def relink_move_constraints(self, from_bone: str, to_bone: str, *, prefix=''):
         if self.params.relink_constraints:
             move_all_constraints(self.obj, from_bone, to_bone, prefix=prefix)
 
-
-    def relink_bone_parent(self, bone_name):
+    def relink_bone_parent(self, bone_name: str):
         if self.params.relink_constraints:
             self.generator.disable_auto_parent(bone_name)
 
             parent_spec = self.params.parent_bone
             if parent_spec:
-                if parent_spec == 'None':
-                    self.set_bone_parent(bone_name, None)
-                    self.generator.disable_auto_parent(bone_name)
-                    # if control boolean is true, change the control bone too
-                    try:
-                        if self.make_control:
-                            self.set_bone_parent(make_derived_name(bone_name, 'ctrl'), None)
-                            self.generator.disable_auto_parent(make_derived_name(bone_name, 'ctrl'))
-                    except:
-                        pass
-                else:
-                    old_parent = self.get_bone_parent(bone_name)
-                    new_parent = self.find_relink_target(parent_spec, old_parent or '') or None
-                    self.set_bone_parent(bone_name, new_parent)
-                    return new_parent
+                old_parent = self.get_bone_parent(bone_name)
+                new_parent = self.find_relink_target(parent_spec, old_parent or '') or None
+                self.set_bone_parent(bone_name, new_parent)
+                return new_parent
 
-
-    def relink_constraint(self, con, specs):
-        if con.type == 'ARMATURE':
+    def relink_constraint(self, con: Constraint, specs: list[str]):
+        if isinstance(con, ArmatureConstraint):
             if len(specs) == 1:
                 specs = repeat(specs[0])
             elif len(specs) != len(con.targets):
-                self.raise_error("Constraint {} actually has {} targets", con.name, len(con.targets))
+                self.raise_error("Constraint {} actually has {} targets",
+                                 con.name, len(con.targets))
 
             for tgt, spec in zip(con.targets, specs):
                 if tgt.target == self.obj:
@@ -73,44 +75,50 @@ class RelinkConstraintsMixin:
 
         elif hasattr(con, 'subtarget'):
             if len(specs) > 1:
-                self.raise_error("Only the Armature constraint can have multiple '@' targets: {}", con.name)
+                self.raise_error("Only the Armature constraint can have multiple '@' targets: {}",
+                                 con.name)
 
-            if con.target == self.obj:
+            if getattr(con, 'target', None) == self.obj:
                 con.subtarget = self.find_relink_target(specs[0], con.subtarget)
 
-
-    def find_relink_target(self, spec, old_target):
+    def find_relink_target(self, spec: str, old_target: str):
         if spec == '':
             return old_target
+        elif spec == 'None':  #added this so you can type 'None' to clear the parent with the raw_copy
+            return None
         elif spec in {'CTRL', 'DEF', 'MCH'}:
             result = choose_derived_bone(self.generator, old_target, spec.lower())
             if not result:
-                result = choose_derived_bone(self.generator, old_target, spec.lower(), by_owner=False)
+                result = choose_derived_bone(self.generator, old_target,
+                                             spec.lower(), by_owner=False)
             if not result:
-                self.raise_error("Cannot find derived {} bone of bone '{}' for relinking", spec, old_target)
+                self.raise_error("Cannot find derived {} bone of bone '{}' for relinking",
+                                 spec, old_target)
             return result
         else:
             if spec not in self.obj.pose.bones:
                 self.raise_error("Cannot find bone '{}' for relinking", spec)
             return spec
 
-
     @classmethod
-    def add_relink_constraints_params(self, params):
+    def add_relink_constraints_params(cls, params):
         params.relink_constraints = bpy.props.BoolProperty(
-            name        = "Relink Constraints",
-            default     = False,
-            description = "For constraints with names formed like 'base@bonename', use the part after '@' as the new subtarget after all bones are created. Use '@CTRL', '@DEF' or '@MCH' to simply replace the prefix"
+            name="Relink Constraints",
+            default=False,
+            description="For constraints with names formed like 'base@bonename', use the part "
+                        "after '@' as the new subtarget after all bones are created. Use '@CTRL', "
+                        "'@DEF' or '@MCH' to simply replace the prefix"
         )
 
         params.parent_bone = bpy.props.StringProperty(
-            name        = "Parent",
-            default     = "",
-            description = "Replace the parent with a different bone after all bones are created. Using simply CTRL, DEF or MCH will replace the prefix instead"
+            name="Parent",
+            default="",
+            description="Replace the parent with a different bone after all bones are created. "
+                        "Using simply CTRL, DEF or MCH will replace the prefix instead"
         )
 
     @classmethod
-    def add_relink_constraints_ui(self, layout, params):
+    def add_relink_constraints_ui(cls, layout: UILayout, params):
         r = layout.row()
         r.prop(params, "relink_constraints")
 
@@ -122,7 +130,11 @@ class RelinkConstraintsMixin:
 
 
 class Rig(BaseRig, RelinkConstraintsMixin):
-    def find_org_bones(self, pose_bone):
+    bones: BaseRig.ToplevelBones[str, BaseRig.CtrlBones, BaseRig.MchBones, str]
+
+    relink: bool
+
+    def find_org_bones(self, pose_bone) -> str:
         return pose_bone.name
 
     def initialize(self):
@@ -146,23 +158,22 @@ class Rig(BaseRig, RelinkConstraintsMixin):
             create_registered_widget(self.obj, org, widget)
 
     @classmethod
-    def add_parameters(self, params):
-        self.add_relink_constraints_params(params)
+    def add_parameters(cls, params):
+        cls.add_relink_constraints_params(params)
 
         params.optional_widget_type = bpy.props.StringProperty(
-            name        = "Widget Type",
-            default     = '',
-            description = "Choose the type of the widget to create"
+            name="Widget Type",
+            default='',
+            description="Choose the type of the widget to create"
         )
 
-
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         col = layout.column()
         col.label(text='This rig type does not add the ORG prefix.')
         col.label(text='Manually add ORG, MCH or DEF as needed.')
 
-        self.add_relink_constraints_ui(layout, params)
+        cls.add_relink_constraints_ui(layout, params)
 
         pbone = bpy.context.active_pose_bone
 
@@ -170,8 +181,8 @@ class Rig(BaseRig, RelinkConstraintsMixin):
             layout_widget_dropdown(layout, params, "optional_widget_type")
 
 
-#add_parameters = InstanceRig.add_parameters
-#parameters_ui = InstanceRig.parameters_ui
+# add_parameters = InstanceRig.add_parameters
+# parameters_ui = InstanceRig.parameters_ui
 
 
 def create_sample(obj):
@@ -183,12 +194,12 @@ def create_sample(obj):
 
     bones = {}
 
-    bone = arm.edit_bones.new('DEF-Bone')
+    bone = arm.edit_bones.new('DEF-bone')
     bone.head[:] = 0.0000, 0.0000, 0.0000
     bone.tail[:] = 0.0000, 0.0000, 0.2000
     bone.roll = 0.0000
     bone.use_connect = False
-    bones['DEF-Bone'] = bone.name
+    bones['DEF-bone'] = bone.name
 
     bpy.ops.object.mode_set(mode='OBJECT')
     pbone = obj.pose.bones[bones['DEF-bone']]
@@ -197,7 +208,7 @@ def create_sample(obj):
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'XYZ'
+    pbone.rotation_mode = 'QUATERNION'
 
     bpy.ops.object.mode_set(mode='EDIT')
     for bone in arm.edit_bones:
@@ -210,5 +221,7 @@ def create_sample(obj):
         bone.select_head = True
         bone.select_tail = True
         arm.edit_bones.active = bone
+        if bcoll := arm.collections.active:
+            bcoll.assign(bone)
 
     return bones

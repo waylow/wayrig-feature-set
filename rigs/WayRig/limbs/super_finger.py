@@ -11,7 +11,7 @@ from rigify.utils.widgets import create_widget
 from rigify.utils.widgets_basic import create_circle_widget, create_sphere_widget
 from rigify.utils.misc import map_list
 from rigify.utils.layers import ControlLayersOption
-from rigify.utils.switch_parent import SwitchParentBuilder
+from ....utils.switch_parent import SwitchParentBuilder
 from rigify.utils.animation import add_generic_snap, add_fk_ik_snap_buttons
 
 from rigify.base_rig import stage

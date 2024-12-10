@@ -1,18 +1,20 @@
+# SPDX-FileCopyrightText: 2021-2022 Blender Foundation
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import bpy
-import math
 
-from itertools import count, repeat
-from mathutils import Vector, Matrix
+from bpy.types import PoseBone
+from mathutils import Quaternion
 
+from ..skin_nodes import BaseSkinNode
 from rigify.utils.naming import make_derived_name
 from rigify.utils.widgets_basic import create_cube_widget
-from rigify.utils.misc import LazyRef
+from rigify.utils.misc import LazyRef, Lazy
 
 from rigify.base_rig import stage
 
-from ..skin_parents import ControlBoneParentArmature
+from ..skin_parents import ControlBoneParentArmature, ControlBoneParentBase
 from ..skin_rigs import BaseSkinRig
 
 
@@ -23,8 +25,12 @@ class Rig(BaseSkinRig):
     a basic parent controller rig.
     """
 
-    def find_org_bones(self, bone):
+    def find_org_bones(self, bone: PoseBone) -> str:
         return bone.name
+
+    make_control: bool
+    input_ref: Lazy[str]
+    transform_orientation: Quaternion
 
     def initialize(self):
         super().initialize()
@@ -45,7 +51,8 @@ class Rig(BaseSkinRig):
     ####################################################
     # Control Nodes
 
-    def build_control_node_parent(self, node, parent_bone):
+    def build_control_node_parent(self, node: BaseSkinNode,
+                                  parent_bone: str) -> ControlBoneParentBase:
         # Parent nodes to the control bone, but isolate rotation and scale
         return ControlBoneParentArmature(
             self, node, bones=[self.input_ref],
@@ -54,22 +61,26 @@ class Rig(BaseSkinRig):
             copy_rotation=LazyRef(self.bones.mch, 'template'),
         )
 
-    def get_child_chain_parent(self, rig, parent_bone):
+    def get_child_chain_parent(self, rig: BaseSkinRig, parent_bone: str) -> str:
         # Forward child chain parenting to the next rig, so that
         # only control nodes are affected by this one.
         return self.get_child_chain_parent_next(rig)
 
     ####################################################
     # BONES
-    #
-    # ctrl:
-    #   master
-    #     Master control
-    # mch:
-    #   template
-    #     Bone used to lock rotation and scale of child nodes.
-    #
-    ####################################################
+
+    class CtrlBones(BaseSkinRig.CtrlBones):
+        master: str                    # Master control
+
+    class MchBones(BaseSkinRig.MchBones):
+        template: str                  # Bone used to lock rotation and scale of child nodes.
+
+    bones: BaseSkinRig.ToplevelBones[
+        str,
+        'Rig.CtrlBones',
+        'Rig.MchBones',
+        str
+    ]
 
     ####################################################
     # Master control
@@ -113,7 +124,7 @@ class Rig(BaseSkinRig):
     # SETTINGS
 
     @classmethod
-    def add_parameters(self, params):
+    def add_parameters(cls, params):
         params.make_control = bpy.props.BoolProperty(
             name="Control",
             default=True,
@@ -121,10 +132,10 @@ class Rig(BaseSkinRig):
         )
 
     @classmethod
-    def parameters_ui(self, layout, params):
+    def parameters_ui(cls, layout, params):
         layout.prop(params, "make_control", text="Generate Control")
 
 
 def create_sample(obj):
-    from rigify.rigs.basic.super_copy import create_sample as inner
+    from ....rigs.basic.super_copy import create_sample as inner
     obj.pose.bones[inner(obj)["Bone"]].rigify_type = 'skin.transform.basic'

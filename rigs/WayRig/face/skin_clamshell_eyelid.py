@@ -10,7 +10,6 @@ from rigify.base_rig import BaseRig
 from rigify.utils.naming import strip_org, make_deformer_name, make_derived_name
 from rigify.utils.widgets import layout_widget_dropdown, create_registered_widget
 from ..widgets import create_triangle_widget
-
 from rigify.utils.bones import put_bone, flip_bone
 from ..basic.raw_copy import RelinkConstraintsMixin
 from rigify.utils.mechanism import driver_var_transform

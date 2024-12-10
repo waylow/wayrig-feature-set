@@ -3,7 +3,11 @@ from bpy.utils import register_class, unregister_class
 import importlib
 
 rigify_info = {
-    "name": "WayRig"
+    "name": "WayRig",
+	"author": "Wayne Dixon",
+	    "description":
+        "New and edited rig components"
+        
 }
 
 from . import ui, generate
