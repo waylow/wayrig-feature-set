@@ -138,5 +138,5 @@ class Rig(BaseSkinChainRigWithRotationOption, RelinkConstraintsMixin):
 
 
 def create_sample(obj):
-    from ...rigs.basic.super_copy import create_sample as inner
-    obj.pose.bones[inner(obj)["Bone"]].rigify_type = 'skin.anchor'
+    from ..basic.super_copy import create_sample as inner
+    obj.pose.bones[inner(obj)["Bone"]].rigify_type = 'WayRig.skin.anchor'

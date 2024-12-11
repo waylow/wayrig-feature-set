@@ -419,4 +419,4 @@ class ControlBoneChainPropagate(ControlBoneWeakParentLayer):
 
 def create_sample(obj):
     from ..basic.copy_chain import create_sample as inner
-    obj.pose.bones[inner(obj)["Bone_01"]].rigify_type = 'skin.stretchy_chain'
+    obj.pose.bones[inner(obj)["Bone_01"]].rigify_type = 'WayRig.skin.stretchy_chain'

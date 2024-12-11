@@ -561,5 +561,5 @@ class Rig(BaseSkinChainRigWithRotationOption):
 
 
 def create_sample(obj):
-    from ...rigs.basic.copy_chain import create_sample as inner
-    obj.pose.bones[inner(obj)["bone.01"]].rigify_type = 'skin.basic_chain'
+    from ..basic.copy_chain import create_sample as inner
+    obj.pose.bones[inner(obj)["Bone_01"]].rigify_type = 'WayRig.skin.basic_chain'

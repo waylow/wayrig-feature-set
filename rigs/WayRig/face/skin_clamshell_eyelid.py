@@ -35,6 +35,7 @@ class Rig(BaseRig, RelinkConstraintsMixin):
     def get_eyelid_info(self):
         """ Collect some info about the height and length of eyelid bone
             to use when setting up the constraints (needs to be done in edit mode)
+            TODO: if the bone it perfectly vertical or horizontal, cancel the operation (division by zero)
         """
         org = self.bones.org
 
@@ -44,7 +45,7 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         bone_length = bone.length
 
 
-        bone_flat_vector = (bone.tail - bone.head)
+        bone_flat_vector = (bone.tail - bone.head)      
         bone_flat_vector.z = 0
         bone_flat_vector.normalize()
         bone_flat_vector *= ( bone_length * 0.25 )
@@ -230,17 +231,17 @@ def create_sample(obj):
     bpy.ops.object.mode_set(mode='EDIT')
     arm = obj.data
 
-    bones = {}
+    bones = {}  
 
-    bone = arm.edit_bones.new('EyeLid_Top')
+    bone = arm.edit_bones.new('EyeLid_Top.L')
     bone.head[:] = 0.0000, 0.0000, 0.0000
-    bone.tail[:] = 0.0000, 0.0000, 0.2000
+    bone.tail[:] = 0.0000, -0.2000, 0.2000
     bone.roll = 0.0000
     bone.use_connect = False
-    bones['EyeLid_Top'] = bone.name
+    bones['EyeLid_Top.L'] = bone.name
 
     bpy.ops.object.mode_set(mode='OBJECT')
-    pbone = obj.pose.bones[bones['Bone']]
+    pbone = obj.pose.bones[bones['EyeLid_Top.L']]
     pbone.rigify_type = 'WayRig.face.skin_clamshell_eyelid'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
