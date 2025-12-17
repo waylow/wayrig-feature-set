@@ -36,6 +36,10 @@ This just makes the widgets thicker.  This should be setting on the armature.
 - added basic parent switching (still WIP)
   This is still an unfished component that adds parent switching to this type.  (I wish to add parent switching to all types)
 
+## Super Head
+- Added option to world align the head control
+- Added option to create a stretch control of the head (useful for cartoony characters)
+
 ## Spine:
 - exposed the b-bone segments in generation
   Set the number of b-bone segments in the spine.
@@ -55,7 +59,7 @@ This widget setup adds 1 extra bone to be the widget override.  It means the dou
 
 ## Leg Component:
 - added option to put the toe pivot at the end of the toe (on the floor)
-- added bendable foot option (for cartoony chars)
+- added bendable foot option (for cartoony characters)
  - updated the heel to remove the old limit rotation constraint (it uses drivers now)
 
 ## Leg Plus (experimental):
